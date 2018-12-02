@@ -6,7 +6,8 @@ export enum FileFormatToken {
     Year = "year",
     TopLabel = "topLabel",
     CombinedLabels = "combinedLabels",
-    Filename = "filename"
+    Filename = "filename",
+    Location = "location"
 }
 
 export type FileNameTokens = Map<FileFormatToken, string>;

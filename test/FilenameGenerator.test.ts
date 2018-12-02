@@ -5,7 +5,7 @@ import { FileUtils } from "../src/utils/FileUtils";
 
 describe("FilenameGenerator tests", () => {
     it("it should handle a complex format", () => {
-        let filenameFormat = "{year}/{topLabel}/{combinedLabels}--{filename}";
+        let filenameFormat = "{year}/{location}/{topLabel}/{combinedLabels}--{filename}";
 
         const imagePath = "./test.sh";
 
@@ -14,12 +14,15 @@ describe("FilenameGenerator tests", () => {
 
         const originalFilename = path.basename(imagePath);
 
+        const location = "Rotterdam";
+
         const tokens: FileNameTokens = new Map<FileFormatToken, string>();
         {
             tokens.set(FileFormatToken.Filename, originalFilename);
             tokens.set(FileFormatToken.TopLabel, topDesc);
             tokens.set(FileFormatToken.CombinedLabels, combinedDesc);
-            tokens.set(FileFormatToken.Year, FileUtils.getYearOfFile(imagePath));
+            tokens.set(FileFormatToken.Year, FileUtils.getModificationYearOfFile(imagePath));
+            tokens.set(FileFormatToken.Location, location);
         }
 
         let actualNewFilename = FilenameGenerator.generateFilename(tokens, filenameFormat);
@@ -29,7 +32,7 @@ describe("FilenameGenerator tests", () => {
         actualNewFilename = fixedYear + actualNewFilename.substr(4);
 
         expect(actualNewFilename).toEqual(
-            `${fixedYear}/${topDesc}/${combinedDesc}--${originalFilename}`
+            `${fixedYear}/${location}/${topDesc}/${combinedDesc}--${originalFilename}`
         );
     });
 });

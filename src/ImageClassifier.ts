@@ -9,6 +9,7 @@ import { GoogleVision } from "./GoogleVision";
 import { ArrayUtils } from "./utils/ArrayUtils";
 import { FileFormatToken, FilenameGenerator, FileNameTokens } from "./utils/FilenameGenerator";
 import { FileUtils } from "./utils/FileUtils";
+import { DEFAULT_LOCATION, MapDateToLocation } from "./utils/MapDateToLocation";
 
 const vision = require("@google-cloud/vision");
 
@@ -140,8 +141,15 @@ const classifyImageAndMoveIt = (
             tokens.set(FileFormatToken.Filename, filename);
             tokens.set(FileFormatToken.TopLabel, topDesc);
             tokens.set(FileFormatToken.CombinedLabels, combinedDesc);
-            tokens.set(FileFormatToken.Year, FileUtils.getYearOfFile(imagePath2));
+            tokens.set(FileFormatToken.Year, FileUtils.getModificationYearOfFile(imagePath2));
         }
+
+        const mapDateToLocation = MapDateToLocation.parseFromCsv(path.dirname(imagePath2));
+
+        tokens.set(
+            FileFormatToken.Location,
+            mapDateToLocation.getLocationForFile(imagePath2) || DEFAULT_LOCATION
+        );
 
         const newFilename = FilenameGenerator.generateFilename(tokens, filenameFormat);
 
@@ -204,7 +212,7 @@ let isFileExtensionOk = (filepath: string) => {
 
     // extensions - works for files with something before the '.'
     let ext = path.extname(filepath);
-    let badExtensions = [".ini", ".mp4", ".mpg", ".mov"];
+    let badExtensions = [".csv", ".ini", ".mp4", ".mpg", ".mov"];
 
     return !badExtensions.some(badExt => badExt.toLowerCase() === ext.toLowerCase());
 };

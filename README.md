@@ -73,8 +73,18 @@ To see more detailed usage info:
 #### example:
 
 ```
-./go ../my-photos {year}/{topLabel}/{combinedLabels}--{filename}
+./go ../my-photos {year}/{location}/{topLabel}/{combinedLabels}--{filename}
 ```
+
+#### advanced - specifying locations by date
+
+You can specify locations for the photos, by date.
+
+Do this by adding a file named `mapDateToLocation.csv` in the same folder as your images.
+
+The approprite location description will be used when renaming the image files.
+
+For an example, see [mapDateToLocation.csv](./static/testData/singleWithLocation/mapDateToLocation.csv)
 
 ## sites
 

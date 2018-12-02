@@ -21,10 +21,13 @@ export namespace FileUtils {
         });
     }
 
-    export function getYearOfFile(filePath: string): string {
-        return fs
-            .statSync(filePath)
-            .birthtime.getFullYear()
+    export function getModificationDateOfFile(filepath: string): Date {
+        return fs.statSync(filepath).ctime;
+    }
+
+    export function getModificationYearOfFile(filePath: string): string {
+        return getModificationDateOfFile(filePath)
+            .getFullYear()
             .toString();
     }
 }

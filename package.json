@@ -68,7 +68,8 @@
         "coveragePathIgnorePatterns": [
             "/node_modules/",
             "/test/",
-            "main.ts"
+            "main.ts",
+            "ImageClassifier"
         ],
         "coverageThreshold": {
             "global": {

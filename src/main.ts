@@ -1,23 +1,8 @@
 // TODO xxx refactor this file!
-import * as fs from "fs";
 import * as _ from "lodash";
 import * as os from "os";
-import * as path from "path";
-import * as sharp from "sharp";
 
-import { GoogleVision } from "./GoogleVision";
 import { ImageClassifier } from "./ImageClassifier";
-import { ArrayUtils } from "./utils/ArrayUtils";
-import { FileFormatToken, FilenameGenerator, FileNameTokens } from "./utils/FilenameGenerator";
-import { FileUtils } from "./utils/FileUtils";
-
-const vision = require("@google-cloud/vision");
-
-const MIN_SCORE_ACCEPTED = 0.7;
-const DELAY_BETWEEN_API_REQUESTS_IN_MILLIS = 1000 / 20;
-const TOP_N_LABELS = 3;
-
-const visionClient = new vision.ImageAnnotatorClient();
 
 let imageInputDir = "";
 let imageOutputDir = os.tmpdir();
@@ -50,13 +35,14 @@ let _processArgs = () => {
 };
 _processArgs();
 
-// TODO xxx - get city/region (country)
+// TODO xxx - get city/region (country) from *phone* image -> mapDateToLocation.csv
 /**
  * - first identify all images that have a lat/long
  * - take 1 such image for each date
  * - for each image, send lat/long to geolocation service -> locationDescription
+ * - gen a CSV file (easy to manually edit/create): like `mapDateToLocation.csv`
  * - THEN run the image classifcation
- * - when generating new filename, try map image date -> locationDescription
+ * - when generating new filename, try map image date -> locationDescription from the CSV file
  */
 
 const isOk = ImageClassifier.classifyAndMoveImages(imageInputDir, imageOutputDir, filenameFormat);
