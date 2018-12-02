@@ -3,14 +3,14 @@ const fs = require("fs");
 const url = require("url");
 
 let repoUrl;
-let package = JSON.parse(fs.readFileSync("package.json") as any);
-if (typeof package.repository === "object") {
-    if (!package.repository.hasOwnProperty("url")) {
+let pckg = JSON.parse(fs.readFileSync("package.json") as any);
+if (typeof pckg.repository === "object") {
+    if (!pckg.repository.hasOwnProperty("url")) {
         throw new Error("URL does not exist in repository section");
     }
-    repoUrl = package.repository.url;
+    repoUrl = pckg.repository.url;
 } else {
-    repoUrl = package.repository;
+    repoUrl = pckg.repository;
 }
 
 let parsedUrl = url.parse(repoUrl);
