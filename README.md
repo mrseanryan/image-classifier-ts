@@ -1,5 +1,3 @@
-# image-classifier-ts
-
 # :camera: image-classifier-ts readme
 
 Command line tool to auto-classify images, renaming them with appropriate labels. Uses Node and Google Vision API.
@@ -37,17 +35,38 @@ image-classifier-ts is in development (Linux, Mac, Windows).
 
 ### 1 Install dependencies
 
+Install:
+
+-   Yarn
+-   Node 8.3.11 (or higher)
+
 ```
 yarn
 ```
 
 ### 2 Configure your Google API key
 
-TODO xxx
+see [configure Google API](configure-google.md).
 
 ### 3 Classify your images
 
-TODO xxx
+On Windows: use a bash shell like `git bash`.
+
+```
+./go <path to image directory> <file name format>
+```
+
+To see more detailed usage info:
+
+```
+./go
+```
+
+#### example:
+
+```
+./go ../my-photos {year}/{city}/{topLabel}--{filename}
+```
 
 ## sites
 
@@ -69,7 +88,7 @@ The project was started to avoid having to repeatedly fix similar coding issues 
 
 ### ORIGINAL readme (from the seeder project)
 
-[see here](https://github.com/mrseanryan/image-classifier-ts/blob/master/readme.original.md)
+[see here](README.original.md)
 
 ## authors
 
@@ -77,4 +96,4 @@ Original work by Sean Ryan - mr.sean.ryan(at gmail.com)
 
 ## licence = MIT
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/mrseanryan/image-classifier-ts/blob/master/LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
