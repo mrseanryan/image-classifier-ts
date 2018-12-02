@@ -52,6 +52,14 @@ see [configure Google API](configure-google.md).
 
 On Windows: use a bash shell like `git bash`.
 
+To test your installation:
+
+```
+./test.sh
+```
+
+To classify your images:
+
 ```
 ./go <path to image directory> <file name format>
 ```
