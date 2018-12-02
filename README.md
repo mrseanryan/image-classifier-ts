@@ -25,10 +25,56 @@ image-classifier-ts is in development (Linux, Mac, Windows).
 
 ## dependencies
 
-- Node 8.11.3 or higher
+-   Node 8.11.3 or higher
 
 ## features
 
-- process multiple image files and move them to a configurable folder, filename path
-- auto classify the image using Google Vision API
-- the output filename can include date, dimensions, file size as well as labels given by Google
+-   process multiple image files and move them to a configurable folder, filename path
+-   auto classify the image using Google Vision API
+-   the output filename can include date, dimensions, file size as well as labels given by Google
+
+## usage
+
+### 1 Install dependencies
+
+```
+yarn
+```
+
+### 2 Configure your Google API key
+
+TODO xxx
+
+### 3 Classify your images
+
+TODO xxx
+
+## sites
+
+| site                 | URL                                               |
+| -------------------- | ------------------------------------------------- |
+| source code (github) | https://github.com/mrseanryan/image-classifier-ts |
+| github page          | https://mrseanryan.github.io/image-classifier-ts/ |
+| npm                  | https://www.npmjs.com/package/image-classifier-ts |
+
+## developing code in _this_ repository
+
+see the [contributing readme](CONTRIBUTING.md).
+
+## origin
+
+This project is based on the excellent seeder project [typescript-library-starter](https://github.com/alexjoverm/typescript-library-starter).
+
+The project was started to avoid having to repeatedly fix similar coding issues in large TypeScript code bases.
+
+### ORIGINAL readme (from the seeder project)
+
+[see here](https://github.com/mrseanryan/image-classifier-ts/blob/master/readme.original.md)
+
+## authors
+
+Original work by Sean Ryan - mr.sean.ryan(at gmail.com)
+
+## licence = MIT
+
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/mrseanryan/image-classifier-ts/blob/master/LICENSE) file for details
