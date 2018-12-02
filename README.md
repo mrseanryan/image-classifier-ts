@@ -2,9 +2,9 @@
 
 Command line tool to auto-classify images, renaming them with appropriate labels. Uses Node and Google Vision API.
 
-## status - !!in development!!
+## status - stable
 
-image-classifier-ts is in development (Linux, Mac, Windows).
+image-classifier-ts is stable, with ongoing development (Linux, Mac, Windows) following semantic versioning.
 
 [![Travis](https://img.shields.io/travis/mrseanryan/image-classifier-ts.svg)](https://travis-ci.org/mrseanryan/image-classifier-ts)
 [![Coveralls](https://img.shields.io/coveralls/mrseanryan/image-classifier-ts.svg)](https://coveralls.io/github/mrseanryan/image-classifier-ts)
