@@ -86,6 +86,8 @@ The approprite location description will be used when renaming the image files.
 
 For an example, see [mapDateToLocation.csv](./static/testData/singleWithLocation/mapDateToLocation.csv)
 
+note: the default for {location} is 'unknown-location'.
+
 ## sites
 
 | site                 | URL                                               |
