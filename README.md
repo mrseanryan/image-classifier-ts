@@ -104,7 +104,8 @@ see the [contributing readme](CONTRIBUTING.md).
 
 This project is based on the excellent seeder project [typescript-library-starter](https://github.com/alexjoverm/typescript-library-starter).
 
-The project was started to avoid having to repeatedly fix similar coding issues in large TypeScript code bases.
+The project was started as a way to avoid depending on particular photo software such as Picasa,
+and also to save time spent on sorting tons of photos!
 
 ### ORIGINAL readme (from the seeder project)
 
