@@ -6,6 +6,9 @@ import * as path from "path";
 import * as sharp from "sharp";
 
 import { GoogleVision } from "./GoogleVision";
+import { ArrayUtils } from "./utils/ArrayUtils";
+import { FileFormatToken, FilenameGenerator, FileNameTokens } from "./utils/FilenameGenerator";
+import { FileUtils } from "./utils/FileUtils";
 
 const vision = require("@google-cloud/vision");
 
@@ -17,11 +20,15 @@ const visionClient = new vision.ImageAnnotatorClient();
 
 let imageInputDir = "";
 let imageOutputDir = os.tmpdir();
-let isMovingToDir = false;
+let filenameFormat = "{year}/{topLabel}/{combinedLabels}--{filename}";
 
 let _showUsage = () => {
     let scriptName = "node " + process.argv[1];
-    console.log(`USAGE: ${scriptName} <path to input dir> <path to output dir> -isMovingToDir`);
+    console.log(
+        `USAGE: ${scriptName} <path to input dir> <path to output dir> [file format]`,
+        `  where file format is like:`,
+        `    {year}/{topLabel}/{combinedLabels}--{filename}`
+    );
 };
 
 let _processArgs = () => {
@@ -33,12 +40,7 @@ let _processArgs = () => {
         case 5:
             imageInputDir = process.argv[2];
             imageOutputDir = process.argv[3];
-            if (process.argv[4] === "-isMovingToDir") {
-                isMovingToDir = true;
-            } else {
-                _showUsage();
-                process.exit(666);
-            }
+            filenameFormat = process.argv[4];
             break;
         default:
             _showUsage();
@@ -93,7 +95,7 @@ let classifyImageAndMoveIt = (topImagePath: string, cbFinal: (error: any) => voi
         imagePath: string,
         cb: (topDesc: string | null, combinedDesc: string | null) => void
     ) => {
-        console.info("classifying image:", imagePath);
+        console.info("  classifying image:", imagePath);
 
         // ref: https://github.com/googleapis/nodejs-vision/blob/master/samples/detect.js
         // ref: https://cloud.google.com/nodejs/docs/reference/vision/0.22.x/
@@ -105,10 +107,6 @@ let classifyImageAndMoveIt = (topImagePath: string, cbFinal: (error: any) => voi
             .then((results: any) => {
                 const labels = results[0].labelAnnotations as GoogleVision.LabelAnnotation[];
 
-                // debugging
-                // console.log("Labels:");
-                // labels.forEach(label => console.log(label.description));
-
                 let topDesc = null;
                 let combinedDesc = null;
 
@@ -119,7 +117,7 @@ let classifyImageAndMoveIt = (topImagePath: string, cbFinal: (error: any) => voi
                             l => l.score >= MIN_SCORE_ACCEPTED && isLabelOk(l.description)
                         ),
                         TOP_N_LABELS
-                    ).map(l => replaceAll(l.description, " ", "-"));
+                    ).map(l => ArrayUtils.replaceAll(l.description, " ", "-"));
 
                     if (topLabels.length > 0) {
                         topDesc = topLabels[0];
@@ -129,8 +127,6 @@ let classifyImageAndMoveIt = (topImagePath: string, cbFinal: (error: any) => voi
                 } else {
                     console.error("no labels returned from API!");
                 }
-
-                console.log(imagePath, `class = [${topDesc}]`);
 
                 // TODO xxx replace cb with async await
                 cb(topDesc, combinedDesc);
@@ -145,17 +141,6 @@ let classifyImageAndMoveIt = (topImagePath: string, cbFinal: (error: any) => voi
         return ["nature", "vertebrate", "flora", "fauna"].indexOf(label) === -1;
     };
 
-    const replaceAll = (label: string, token: string, replacement: string) =>
-        label.split(token).join(replacement);
-
-    const ensureDirExists = (dirPath: string, isEnabled: boolean, cb: () => void) => {
-        // TODO rewrite to NOT use sync methods
-        if (isEnabled && !fs.existsSync(dirPath)) {
-            fs.mkdirSync(dirPath);
-        }
-        cb();
-    };
-
     const moveImage = (
         imagePath2: string,
         outDir: string,
@@ -163,21 +148,24 @@ let classifyImageAndMoveIt = (topImagePath: string, cbFinal: (error: any) => voi
         combinedDesc: string,
         cb: (error: any) => void
     ) => {
-        let activeOutDir = outDir;
-        ensureDirExists(outDir, true, () => {
-            if (isMovingToDir) {
-                activeOutDir = path.join(outDir, topDesc);
-            }
+        const tokens: FileNameTokens = new Map<FileFormatToken, string>();
+        {
+            let filename = path.basename(imagePath2);
+            tokens.set(FileFormatToken.Filename, filename);
+            tokens.set(FileFormatToken.TopLabel, topDesc);
+            tokens.set(FileFormatToken.CombinedLabels, combinedDesc);
+            tokens.set(FileFormatToken.Year, FileUtils.getYearOfFile(imagePath2));
+        }
 
-            ensureDirExists(activeOutDir, isMovingToDir, () => {
-                let filename = path.basename(imagePath2);
-                const newFilename = `${combinedDesc}--${filename}`;
-                const newPath = path.join(activeOutDir, newFilename);
+        const newFilename = FilenameGenerator.generateFilename(tokens, filenameFormat);
 
-                console.log("moving image ", imagePath2, " => ", newPath);
-                fs.rename(imagePath2, newPath, cb);
-            });
-        });
+        const subDir = path.dirname(newFilename);
+        FileUtils.ensureSubDirsExist(outDir, subDir);
+
+        const newPath = path.join(outDir, newFilename);
+
+        console.log("moving image ", imagePath2, " => ", newPath);
+        fs.rename(imagePath2, newPath, cb);
     };
 
     let classifyAndMoveSmallImage = (imagePath2: string, originalImagePath: string) => {
@@ -260,7 +248,7 @@ fs.readdir(imageInputDir, (fsError: any, files) => {
                     handleError(error);
                 });
             } else {
-                console.log(`skipping file ${imagePath} (is dir or a skipped file extension)`);
+                console.warn(`skipping file ${imagePath} (is dir or a skipped file extension)`);
             }
             i++;
         }

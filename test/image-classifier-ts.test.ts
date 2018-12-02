@@ -1,5 +1,7 @@
 import DummyClass from "../src/image-classifier-ts";
 
+// TODO xxx delete me
+
 /**
  * Dummy test
  */

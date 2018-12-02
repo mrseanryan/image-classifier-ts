@@ -73,7 +73,7 @@ To see more detailed usage info:
 #### example:
 
 ```
-./go ../my-photos {year}/{city}/{topLabel}--{filename}
+./go ../my-photos {year}/{topLabel}/{combinedLabels}--{filename}
 ```
 
 ## sites
