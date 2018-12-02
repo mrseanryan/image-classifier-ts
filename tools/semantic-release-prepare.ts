@@ -5,7 +5,7 @@ const colors = require("colors");
 const { readFileSync, writeFileSync } = require("fs");
 const pkg = JSON.parse(readFileSync(path.resolve(__dirname, "..", "package.json")));
 
-package.scripts.prepush = "npm run test:prod && npm run build";
+package.scripts.prepush = "npm run test:prod";
 package.scripts.commitmsg = "commitlint -E GIT_PARAMS";
 
 writeFileSync(path.resolve(__dirname, "..", "package.json"), JSON.stringify(package, null, 2));
