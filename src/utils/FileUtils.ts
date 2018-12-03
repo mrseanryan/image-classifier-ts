@@ -1,6 +1,8 @@
 import * as fs from "fs";
-import * as os from "os";
 import * as path from "path";
+
+import { ExifUtils } from "./ExifUtils";
+import { SimpleDate } from "./SimpleDate";
 
 export namespace FileUtils {
     export function ensureDirExists(dirPath: string) {
@@ -21,13 +23,22 @@ export namespace FileUtils {
         });
     }
 
-    export function getModificationDateOfFile(filepath: string): Date {
-        return fs.statSync(filepath).ctime;
+    export function getModificationDateOfFile(filepath: string): SimpleDate {
+        // use date from exif if available (is less likely to change than the file stamp)
+        const exifTags = ExifUtils.readFile(filepath);
+        if (exifTags) {
+            const exifDate = exifTags.getDateStamp();
+            if (exifDate) {
+                return exifDate;
+            }
+        }
+
+        // fallback:
+        const fileCreatedDate = fs.statSync(filepath).ctime;
+        return SimpleDate.fromDate(fileCreatedDate);
     }
 
     export function getModificationYearOfFile(filePath: string): string {
-        return getModificationDateOfFile(filePath)
-            .getFullYear()
-            .toString();
+        return getModificationDateOfFile(filePath).year.toString();
     }
 }
