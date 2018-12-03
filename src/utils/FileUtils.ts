@@ -34,7 +34,7 @@ export namespace FileUtils {
         }
 
         // fallback:
-        const fileCreatedDate = fs.statSync(filepath).ctime;
+        const fileCreatedDate = fs.statSync(filepath).mtime;
         return SimpleDate.fromDate(fileCreatedDate);
     }
 
