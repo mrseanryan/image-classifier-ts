@@ -123,9 +123,9 @@ const classifyImageAndMoveIt = (
             });
     };
 
-    // ignore generic labels like: nature, vertebrate, fauna -> take the next one...
+    // ignore generic labels like: vertebrate -> take the next one...
     const isLabelOk = (label: string) => {
-        return ["nature", "vertebrate", "flora", "fauna"].indexOf(label) === -1;
+        return ["vertebrate"].indexOf(label) === -1;
     };
 
     const moveImage = (
