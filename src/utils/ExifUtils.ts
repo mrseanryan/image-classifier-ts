@@ -88,8 +88,8 @@ export class ExifTagSet {
         const long = this.get(ExifTag.GPSLongitude);
 
         return (
-            lat !== undefined &&
-            long !== undefined &&
+            lat !== null &&
+            long !== null &&
             this.get(ExifTag.GPSLatitudeRef) === KNOWN_LATITUDE_FORMAT &&
             this.get(ExifTag.GPSLongitudeRef) === KNOWN_LONGITUDE_FORMAT
         );
