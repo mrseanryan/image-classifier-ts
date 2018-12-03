@@ -92,10 +92,8 @@ export class MapDateToLocation {
     getLocationForFile(filepath: string): string | null {
         const modified = FileUtils.getModificationDateOfFile(filepath);
 
-        const simpleModified = SimpleDate.fromDate(modified);
-
-        const location = this.getLocationForDate(simpleModified);
-        console.log(`  location for file - date ${simpleModified.toString()} = '${location}'`);
+        const location = this.getLocationForDate(modified);
+        console.log(`  location for file - date ${modified.toString()} = '${location}'`);
 
         return location;
     }

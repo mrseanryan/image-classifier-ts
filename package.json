@@ -130,6 +130,7 @@
     },
     "dependencies": {
         "@google-cloud/vision": "^0.23.0",
+        "exifreader": "^2.5.0",
         "sharp": "^0.21.0"
     }
 }

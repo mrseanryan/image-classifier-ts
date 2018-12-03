@@ -107,6 +107,10 @@ This project is based on the excellent seeder project [typescript-library-starte
 The project was started as a way to avoid depending on particular photo software such as Picasa,
 and also to save time spent on sorting tons of photos!
 
+### libaries
+
+**image-classifier-ts** uses the [ExifReader library](https://github.com/mattiasw/ExifReader).
+
 ### ORIGINAL readme (from the seeder project)
 
 [see here](README.original.md)

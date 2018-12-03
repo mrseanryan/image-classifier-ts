@@ -3045,6 +3045,11 @@ execa@^1.0.0:
     signal-exit "^3.0.0"
     strip-eof "^1.0.0"
 
+exifreader@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/exifreader/-/exifreader-2.5.0.tgz#0f795e601632b78a463b9518755601f7f51efdeb"
+  integrity sha512-jxS+cSjalvtF4Ga1D0G1YbVwPBOUYIGMuVbUNfor1+5CSc4h2FBvFC59HSkpPTqiHnA9zF0W5BW8eV3CjmklcQ==
+
 exit@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/exit/-/exit-0.1.2.tgz#0632638f8d877cc82107d30a0fff1a17cba1cd0c"
