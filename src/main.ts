@@ -39,11 +39,15 @@ _processArgs();
 // TODO xxx - get city/region (country) from *phone* image -> mapDateToLocation.csv
 /**
  * - first identify all images that have a lat/long
- * - take 1 such image for each date
- * - for each image, send lat/long to geolocation service -> locationDescription
- * - gen a CSV file (easy to manually edit/create): like `mapDateToLocation.csv`
+ *  - for each such file:
+ *      - send lat/long to geolocation service -> locationDescription
+ *      - add/update entry in mapFilenameToLocation.csv
+ * - use that file mapFilenameToLocation.csv -> create/update mapDateToLocation.csv file
+ *
  * - THEN run the image classifcation
- * - when generating new filename, try map image date -> locationDescription from the CSV file
+ * - when generating new filename:
+ *      - first look for entry in mapFilenameToLocation.csv
+ *      - else try map image date -> locationDescription from mapDateToLocation.csv file
  */
 
 const isOk = DirectoryProcessor.processDirectory(imageInputDir, imageOutputDir, filenameFormat);
