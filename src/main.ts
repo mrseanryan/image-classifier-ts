@@ -2,6 +2,7 @@
 import * as _ from "lodash";
 import * as os from "os";
 
+import { DirectoryProcessor } from "./DirectoryProcessor";
 import { ImageClassifier } from "./ImageClassifier";
 
 let imageInputDir = "";
@@ -45,7 +46,7 @@ _processArgs();
  * - when generating new filename, try map image date -> locationDescription from the CSV file
  */
 
-const isOk = ImageClassifier.classifyAndMoveImages(imageInputDir, imageOutputDir, filenameFormat);
+const isOk = DirectoryProcessor.processDirectory(imageInputDir, imageOutputDir, filenameFormat);
 
 if (isOk) {
     console.log("[done]");
