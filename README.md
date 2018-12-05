@@ -7,7 +7,6 @@ Command line tool to auto-classify images, renaming them with appropriate labels
 image-classifier-ts is stable, with ongoing development (Linux, Mac, Windows) following semantic versioning.
 
 [![Travis](https://img.shields.io/travis/mrseanryan/image-classifier-ts.svg)](https://travis-ci.org/mrseanryan/image-classifier-ts)
-[![Coveralls](https://img.shields.io/coveralls/mrseanryan/image-classifier-ts.svg)](https://coveralls.io/github/mrseanryan/image-classifier-ts)
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/mrseanryan/image-classifier-ts.svg)](https://greenkeeper.io/)
 [![Dev Dependencies](https://david-dm.org/mrseanryan/image-classifier-ts/dev-status.svg)](https://david-dm.org/mrseanryan/image-classifier-ts?type=dev)
