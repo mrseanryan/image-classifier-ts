@@ -35,7 +35,7 @@ const handleError = (err: any) => {
 };
 
 const finish = (fileCount: number) => {
-    console.log(`${fileCount} files were processed`);
+    console.log(`\n${fileCount} files were processed`);
 
     if (hasError) {
         console.error("errors occurred!");
@@ -100,6 +100,8 @@ async function processImageDirectory(
                 if (!isDirectory(imageInPath) && isFileExtensionOk(imagePath)) {
                     let isOk = true;
                     try {
+                        console.log(`\nprocessing image at ${imageInPath}`);
+
                         isOk = await ImageClassifier.classifyImageAndMoveIt(
                             imageInPath,
                             filenameFormat,
@@ -115,7 +117,9 @@ async function processImageDirectory(
                         handleError("DP: error occurred");
                     }
                 } else {
-                    console.warn(`skipping file ${imagePath} (is dir or a skipped file extension)`);
+                    console.warn(
+                        `\nskipping file ${imagePath} (is dir or a skipped file extension)`
+                    );
                 }
 
                 i++;
