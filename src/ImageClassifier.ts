@@ -19,11 +19,31 @@ const TOP_N_LABELS = 3;
 const visionClient = new vision.ImageAnnotatorClient();
 
 export namespace ImageClassifier {
-    export function classifyImageAndMoveIt(
+    export async function classifyImageAndMoveIt(
+        topImagePath: string,
+        filenameFormat: string,
+        imageOutputDir: string
+    ): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            _classifyImageAndMoveIt(
+                topImagePath,
+                filenameFormat,
+                imageOutputDir,
+                error => {
+                    console.error(`error with file ${topImagePath}`, error);
+                    reject(error);
+                },
+                () => resolve(true)
+            );
+        });
+    }
+
+    export function _classifyImageAndMoveIt(
         topImagePath: string,
         filenameFormat: string,
         imageOutputDir: string,
-        handleError: (error: any) => void
+        handleError: (error: any) => void,
+        done: () => void
     ) {
         console.log(`detecting labels in image: '${topImagePath}'`);
 
@@ -48,8 +68,8 @@ export namespace ImageClassifier {
                         .toFile(outPath, (sharpError, info) => {
                             if (sharpError) {
                                 console.error("Error resizing file " + filePath, sharpError);
+                                handleError(sharpError);
                             }
-                            handleError(sharpError);
 
                             cb(outPath, sharpError);
                         });
@@ -148,15 +168,10 @@ export namespace ImageClassifier {
                         throw new Error("unexpected - topDesc is set but not combinedDesc");
                     }
 
-                    moveImage(
-                        originalImagePath,
-                        imageOutputDir,
-                        topDesc,
-                        combinedDesc,
-                        handleError
-                    );
+                    moveImage(originalImagePath, imageOutputDir, topDesc, combinedDesc, done);
                 } else {
                     console.warn("skipping image - no label");
+                    done();
                 }
             });
         };
@@ -167,8 +182,9 @@ export namespace ImageClassifier {
             console.log(`    'file is large! - ${fileSizeMb} Mb - will use resized copy...`);
 
             resizeImage(topImagePath, (newImagePath, err) => {
-                handleError(err);
-                if (!err) {
+                if (err) {
+                    handleError(err);
+                } else {
                     if (!newImagePath) {
                         throw new Error("unexpected: newImagePath is not set!");
                     }

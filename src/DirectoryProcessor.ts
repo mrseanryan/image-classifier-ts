@@ -2,6 +2,7 @@
 import * as fs from "fs";
 import * as _ from "lodash";
 import * as path from "path";
+import { cat } from "shelljs";
 
 import { ImageClassifier } from "./ImageClassifier";
 
@@ -9,14 +10,20 @@ let hasError = false;
 const DELAY_BETWEEN_API_REQUESTS_IN_MILLIS = 1000 / 20;
 
 export namespace DirectoryProcessor {
-    export function processDirectory(
+    export async function processDirectory(
         imageInputDir: string,
         imageOutputDir: string,
         filenameFormat: string
-    ): boolean {
-        processImageDirectory(imageInputDir, filenameFormat, imageOutputDir);
+    ): Promise<boolean> {
+        try {
+            await processImageDirectory(imageInputDir, filenameFormat, imageOutputDir);
 
-        return !hasError;
+            console.log("[processDirectory] - done");
+            return !hasError;
+        } catch (error) {
+            console.error("[processDirectory] error", error);
+            return false;
+        }
     }
 }
 
@@ -27,7 +34,7 @@ const handleError = (err: any) => {
     }
 };
 
-let finish = (fileCount: number) => {
+const finish = (fileCount: number) => {
     console.log(`${fileCount} files were processed`);
 
     if (hasError) {
@@ -36,65 +43,96 @@ let finish = (fileCount: number) => {
     }
 };
 
-let isFileExtensionOk = (filepath: string) => {
+const isFileExtensionOk = (filepath: string) => {
     if (filepath.endsWith(".dropbox")) {
         return false;
     }
 
     // extensions - works for files with something before the '.'
-    let ext = path.extname(filepath);
-    let badExtensions = [".csv", ".ini", ".mp4", ".mpg", ".mov"];
+    const ext = path.extname(filepath);
+    const badExtensions = [".csv", ".ini", ".mp4", ".mpg", ".mov"];
 
     return !badExtensions.some(badExt => badExt.toLowerCase() === ext.toLowerCase());
 };
 
-let isDirectory = (filepath: string) => {
+const isDirectory = (filepath: string) => {
     return fs.lstatSync(filepath).isDirectory();
 };
 
-const processImageDirectory = (
+async function processImageDirectory(
     imageInputDir: string,
     filenameFormat: string,
     imageOutputDir: string
-) => {
-    fs.readdir(imageInputDir, (fsError: any, files) => {
-        handleError(fsError);
+): Promise<undefined> {
+    const readdirPromise = () => {
+        return new Promise<string[]>(function(ok, notOk) {
+            fs.readdir(imageInputDir, function(err, _files) {
+                if (err) {
+                    notOk(err);
+                } else {
+                    ok(_files);
+                }
+            });
+        });
+    };
 
-        console.log(`found ${files.length} files to process`);
+    let files: string[];
+    try {
+        files = await readdirPromise();
+    } catch (error) {
+        console.error(error);
+        return;
+    }
+    console.log(`found ${files.length} files to process`);
 
+    return new Promise<undefined>((resolve, reject) => {
         // google API quota seems to be average rate per second
         // rather than 'total within 100s'.
         //
         // so deliberately slowing down the request rate, to avoid hitting the quota:
 
         let i = 0;
-        let doNextImage = () => {
+        const doNextImage = async () => {
             if (i < files.length) {
                 let imagePath = files[i];
 
                 let imageInPath = path.join(imageInputDir, imagePath);
                 if (!isDirectory(imageInPath) && isFileExtensionOk(imagePath)) {
-                    ImageClassifier.classifyImageAndMoveIt(
-                        imageInPath,
-                        filenameFormat,
-                        imageOutputDir,
-                        handleError
-                    );
+                    let isOk = true;
+                    try {
+                        isOk = await ImageClassifier.classifyImageAndMoveIt(
+                            imageInPath,
+                            filenameFormat,
+                            imageOutputDir
+                        );
+                    } catch (err) {
+                        console.error("DP: error");
+                        handleError(err);
+                        isOk = false;
+                    }
+
+                    if (!isOk) {
+                        handleError("DP: error occurred");
+                    }
                 } else {
                     console.warn(`skipping file ${imagePath} (is dir or a skipped file extension)`);
                 }
-                i++;
-            }
 
-            if (i < files.length) {
-                setTimeout(() => {
-                    doNextImage();
-                }, DELAY_BETWEEN_API_REQUESTS_IN_MILLIS);
-            } else {
-                finish(files.length);
+                i++;
+
+                if (i < files.length) {
+                    setTimeout(() => {
+                        doNextImage();
+                    }, DELAY_BETWEEN_API_REQUESTS_IN_MILLIS);
+                } else {
+                    finish(files.length);
+
+                    console.log("DP: resolving");
+                    resolve();
+                }
             }
         };
 
         doNextImage();
     });
-};
+}

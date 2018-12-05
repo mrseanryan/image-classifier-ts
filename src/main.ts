@@ -1,4 +1,3 @@
-// TODO xxx refactor this file!
 import * as _ from "lodash";
 import * as os from "os";
 
@@ -50,10 +49,14 @@ _processArgs();
  *      - else try map image date -> locationDescription from mapDateToLocation.csv file
  */
 
-const isOk = DirectoryProcessor.processDirectory(imageInputDir, imageOutputDir, filenameFormat);
-
-if (isOk) {
-    console.log("[done]");
-} else {
-    console.error("[errors occurred]");
-}
+DirectoryProcessor.processDirectory(imageInputDir, imageOutputDir, filenameFormat)
+    .then((isOk: boolean) => {
+        if (isOk) {
+            console.log("[done]");
+        } else {
+            console.error("main: [errors occurred]");
+        }
+    })
+    .catch(error => {
+        console.error("main: [error occurred]", error);
+    });

@@ -3,6 +3,9 @@ import * as path from "path";
 
 import { SimpleDate } from "./SimpleDate";
 
+// To solve warning from exifreader
+(global as any).DOMParser = require("xmldom").DOMParser;
+
 const exifReader = require("exifreader");
 
 // Interesting subset of exif tags
@@ -114,6 +117,10 @@ export namespace ExifUtils {
 
             return ExifTagSet.fromTags(tags);
         } catch (error) {
+            if (error.name === "MetadataMissingError") {
+                return null;
+            }
+
             console.error("exif error", filepath, error);
 
             throw error;
