@@ -3,7 +3,7 @@ import * as path from "path";
 import { MapDateToLocation } from "../src/utils/MapDateToLocation";
 import { SimpleDate } from "../src/utils/SimpleDate";
 
-const PATH_TO_TEST_DATA = "./static/testData/singleWithLocation";
+const PATH_TO_TEST_DATA = "./static/testData/withLocation";
 
 describe("MapDateToLocation tests", () => {
     it("should parse locations from a CSV file", () => {
