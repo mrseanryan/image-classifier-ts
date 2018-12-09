@@ -1,4 +1,4 @@
-import { ImageProperties } from "./model/ImageProperties";
+import { ImageProperties } from "../model/ImageProperties";
 
 export namespace ConsoleReporter {
     export function report(properties: ImageProperties) {

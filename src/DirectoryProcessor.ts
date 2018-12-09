@@ -3,10 +3,10 @@ import * as fs from "fs";
 import * as _ from "lodash";
 import * as path from "path";
 
-import { ConsoleReporter } from "./ConsoleReporter";
 import { ImageClassifier } from "./ImageClassifier";
 import { ImageMover } from "./ImageMover";
 import { ImageProperties } from "./model/ImageProperties";
+import { ConsoleReporter } from "./utils/ConsoleReporter";
 
 let hasError = false;
 const DELAY_BETWEEN_API_REQUESTS_IN_MILLIS = 1000 / 20;

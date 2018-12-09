@@ -71,6 +71,7 @@
             "/test/",
             "DirectoryProcessor.ts",
             "ImageClassifier",
+            "ImageMover",
             "main.ts"
         ],
         "coverageThreshold": {
