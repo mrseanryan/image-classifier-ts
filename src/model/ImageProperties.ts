@@ -33,16 +33,25 @@ export class ImageProperties {
     ) {}
 
     get fileSizeMbText(): string {
+        return this.addSizeSuffix(this._getFileSizeMbText());
+    }
+
+    private _getFileSizeMbText(): string {
         if (this.fileSizeMb === null) {
-            return "(unknown)";
+            return "Unknown";
         }
 
         return this.roundToFewPlaces(this.fileSizeMb).toString();
     }
 
     private roundToFewPlaces(value: number): number {
-        return Math.round(value / 100) * 100;
+        return Math.round(value * 10) / 10;
     }
+
+    private addSizeSuffix(value: string): string {
+        return value + "Mb";
+    }
+
     get imageFilename(): string {
         return path.basename(this.imagePath);
     }

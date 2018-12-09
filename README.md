@@ -84,7 +84,7 @@ To see more detailed usage info:
 ##### example:
 
 ```
-./go ../my-photos {year}/{location}/{topLabel}/{combinedLabels}--{filename}
+./go ../my-photos {year}/{location}/{topLabel}/{combinedLabels}-{fileSizeMb}--{filename}
 ```
 
 ##### advanced - specifying locations by date

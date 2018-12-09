@@ -22,6 +22,7 @@ export namespace ImageMover {
             tokens.set(FileFormatToken.TopLabel, imageProps.topLabel);
             tokens.set(FileFormatToken.CombinedLabels, imageProps.topLabels.join("_"));
             tokens.set(FileFormatToken.Year, imageProps.modificationDate.year.toString());
+            tokens.set(FileFormatToken.FileSizeMb, imageProps.fileSizeMbText);
         }
 
         const mapDateToLocation = MapDateToLocation.parseFromCsv(

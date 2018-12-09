@@ -5,7 +5,7 @@ export namespace ConsoleReporter {
         console.log(`results for ${properties.imageFilename}`);
         write("file path", properties.imagePath);
         write("top labels", properties.topLabels.join(", "));
-        write("file size (Mb)", properties.fileSizeMbText);
+        write("file size", properties.fileSizeMbText);
         write("last modified", properties.modificationDate.toString());
         write("exif", "---");
         properties.exif.dump();
