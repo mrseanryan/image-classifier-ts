@@ -5,19 +5,20 @@ import * as path from "path";
 import { ImageClassifier } from "./ImageClassifier";
 import { ImageMover } from "./ImageMover";
 import { ImageProperties } from "./model/ImageProperties";
+import { Args } from "./utils/args/Args";
 import { ConsoleReporter } from "./utils/ConsoleReporter";
 
 let hasError = false;
 const DELAY_BETWEEN_API_REQUESTS_IN_MILLIS = 1000 / 20;
 
 export namespace DirectoryProcessor {
-    export async function processDirectory(
-        imageInputDir: string,
-        imageOutputDir: string,
-        filenameFormat: string
-    ): Promise<boolean> {
+    export async function processDirectory(args: Args): Promise<boolean> {
         try {
-            await processImageDirectory(imageInputDir, filenameFormat, imageOutputDir);
+            await processImageDirectory(
+                args.imageInputDir,
+                args.options.filenameFormat,
+                args.imageOutputDir
+            );
 
             console.log("[processDirectory] - done");
             return !hasError;
@@ -109,7 +110,7 @@ async function processImageDirectory(
 
                         ConsoleReporter.report(imageProps);
 
-                        // TODO xxx only move if --move
+                        // TODO xxx only move if not -dryRun
                         await ImageMover.move(imageProps, filenameFormat, imageOutputDir);
                     } catch (err) {
                         console.error("DP: error");

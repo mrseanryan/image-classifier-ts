@@ -1,38 +1,12 @@
 import * as _ from "lodash";
-import * as os from "os";
 
 import { DirectoryProcessor } from "./DirectoryProcessor";
+import { ArgsParser } from "./utils/args/ArgsParser";
 
-let imageInputDir = "";
-let imageOutputDir = os.tmpdir();
-let filenameFormat = "{year}/{topLabel}/{combinedLabels}--{filename}";
-
-let _showUsage = () => {
-    let scriptName = "node " + process.argv[1];
-    console.log(
-        `USAGE: ${scriptName} <path to input dir> <path to output dir> [file format]`,
-        `  where file format is like:`,
-        `    {year}/{location}/{topLabel}/{combinedLabels}-{fileSizeMb}--{filename}`
-    );
-};
-
-let _processArgs = () => {
-    switch (process.argv.length) {
-        case 4:
-            imageInputDir = process.argv[2];
-            imageOutputDir = process.argv[3];
-            break;
-        case 5:
-            imageInputDir = process.argv[2];
-            imageOutputDir = process.argv[3];
-            filenameFormat = process.argv[4];
-            break;
-        default:
-            _showUsage();
-            process.exit(666);
-    }
-};
-_processArgs();
+const args = ArgsParser.getArgs();
+if (!args) {
+    process.exit(666);
+}
 
 // TODO xxx - get city/region (country) from *phone* image -> mapDateToLocation.csv
 /**
@@ -48,7 +22,7 @@ _processArgs();
  *      - else try map image date -> locationDescription from mapDateToLocation.csv file
  */
 
-DirectoryProcessor.processDirectory(imageInputDir, imageOutputDir, filenameFormat)
+DirectoryProcessor.processDirectory(args!)
     .then((isOk: boolean) => {
         if (isOk) {
             console.log("[done]");

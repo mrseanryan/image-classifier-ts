@@ -72,19 +72,25 @@ To test your installation:
 To classify your images:
 
 ```
-./go <path to image directory> <file name format>
+./go.sh <path to image directory> <path to output directory> [-filenameFormat=<file name format>]
+```
+
+example:
+
+```
+./go.sh ../myPhotos ../myPhotos-labelled
 ```
 
 To see more detailed usage info:
 
 ```
-./go
+./go.sh
 ```
 
 ##### example:
 
 ```
-./go ../my-photos {year}/{location}/{topLabel}/{combinedLabels}-{fileSizeMb}--{filename}
+./go.sh ../my-photos -filenameFormat={year}/{location}/{topLabel}/{combinedLabels}-{fileSizeMb}--{filename}
 ```
 
 ##### advanced - specifying locations by date
