@@ -14,11 +14,7 @@ const DELAY_BETWEEN_API_REQUESTS_IN_MILLIS = 1000 / 20;
 export namespace DirectoryProcessor {
     export async function processDirectory(args: Args): Promise<boolean> {
         try {
-            await processImageDirectory(
-                args.imageInputDir,
-                args.options.filenameFormat,
-                args.imageOutputDir
-            );
+            await processImageDirectory(args);
 
             console.log("[processDirectory] - done");
             return !hasError;
@@ -61,14 +57,10 @@ const isDirectory = (filepath: string) => {
     return fs.lstatSync(filepath).isDirectory();
 };
 
-async function processImageDirectory(
-    imageInputDir: string,
-    filenameFormat: string,
-    imageOutputDir: string
-): Promise<undefined> {
+async function processImageDirectory(args: Args): Promise<undefined> {
     const readdirPromise = () => {
         return new Promise<string[]>(function(ok, notOk) {
-            fs.readdir(imageInputDir, function(err, _files) {
+            fs.readdir(args.imageInputDir, function(err, _files) {
                 if (err) {
                     notOk(err);
                 } else {
@@ -98,7 +90,7 @@ async function processImageDirectory(
             if (i < files.length) {
                 let imagePath = files[i];
 
-                let imageInPath = path.join(imageInputDir, imagePath);
+                let imageInPath = path.join(args.imageInputDir, imagePath);
                 if (!isDirectory(imageInPath) && isFileExtensionOk(imagePath)) {
                     let isOk = true;
                     try {
@@ -106,12 +98,20 @@ async function processImageDirectory(
 
                         const properties = new ImageProperties(imageInPath);
 
-                        const imageProps = await ImageClassifier.classifyImage(properties);
+                        const imageProps = await ImageClassifier.classifyImage(
+                            properties,
+                            args.options
+                        );
 
                         ConsoleReporter.report(imageProps);
 
-                        // TODO xxx only move if not -dryRun
-                        await ImageMover.move(imageProps, filenameFormat, imageOutputDir);
+                        if (!args.options.dryRun) {
+                            await ImageMover.move(
+                                imageProps,
+                                args.options.filenameFormat,
+                                args.imageOutputDir
+                            );
+                        }
                     } catch (err) {
                         console.error("DP: error");
                         handleError(err);

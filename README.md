@@ -81,6 +81,12 @@ example:
 ./go.sh ../myPhotos ../myPhotos-labelled
 ```
 
+To have a 'dry run' where the images are not actually moved, use the 'dryRun' option:
+
+```
+./go.sh ../myPhotos ../myPhotos-labelled -dryRun
+```
+
 To see more detailed usage info:
 
 ```

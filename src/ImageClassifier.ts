@@ -7,6 +7,7 @@ import * as sharp from "sharp";
 
 import { GoogleVision } from "./GoogleVision";
 import { ImageProperties } from "./model/ImageProperties";
+import { Options } from "./utils/args/Args";
 import { ArrayUtils } from "./utils/ArrayUtils";
 
 const vision = require("@google-cloud/vision");
@@ -19,10 +20,14 @@ const visionClient = new vision.ImageAnnotatorClient();
 
 export namespace ImageClassifier {
     // TODO xxx add option type: topN=3, minScore
-    export async function classifyImage(properties: ImageProperties): Promise<ImageProperties> {
+    export async function classifyImage(
+        properties: ImageProperties,
+        options: Options
+    ): Promise<ImageProperties> {
         return new Promise<ImageProperties>((resolve, reject) => {
             _classifyImageWithResize(
                 properties,
+                options,
                 error => {
                     console.error(`error with file ${properties.imagePath}`, error);
                     reject(error);
@@ -34,6 +39,7 @@ export namespace ImageClassifier {
 
     export function _classifyImageWithResize(
         properties: ImageProperties,
+        options: Options,
         handleError: (error: any) => void,
         done: (newProperties: ImageProperties) => void
     ) {
@@ -61,11 +67,11 @@ export namespace ImageClassifier {
                         throw new Error("unexpected: newImagePath is not set!");
                     }
 
-                    classifySmallImage(activeProperties, handleError, done);
+                    classifySmallImage(activeProperties, options, handleError, done);
                 }
             });
         } else {
-            classifySmallImage(activeProperties, handleError, done);
+            classifySmallImage(activeProperties, options, handleError, done);
         }
     }
 
@@ -105,6 +111,7 @@ export namespace ImageClassifier {
 
     const _classifyImage = (
         imagePath: string,
+        options: Options,
         handleError: (error: any) => void,
         cb: (topNLabels: string[] | null) => void
     ) => {
@@ -125,10 +132,8 @@ export namespace ImageClassifier {
                 if (labels && labels.length > 0) {
                     // note: results already have the best one first:
                     const topLabels = _.take(
-                        labels.filter(
-                            l => l.score >= MIN_SCORE_ACCEPTED && isLabelOk(l.description)
-                        ),
-                        TOP_N_LABELS
+                        labels.filter(l => l.score >= options.minScore && isLabelOk(l.description)),
+                        options.topNLabels
                     ).map(l => ArrayUtils.replaceAll(l.description, " ", "-"));
 
                     if (topLabels.length > 0) {
@@ -153,10 +158,11 @@ export namespace ImageClassifier {
 
     const classifySmallImage = (
         properties: ImageProperties,
+        options: Options,
         handleError: (error: any) => void,
         done: (properties: ImageProperties) => void
     ) => {
-        _classifyImage(properties.imagePath, handleError, topNLabels => {
+        _classifyImage(properties.imagePath, options, handleError, topNLabels => {
             if (topNLabels) {
                 const activeProperties = ImageProperties.withTopLabels(properties, topNLabels);
 
