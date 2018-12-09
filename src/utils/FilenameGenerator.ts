@@ -1,6 +1,6 @@
 import { parse } from "marked";
 
-import { ArrayUtils } from "./ArrayUtils";
+import { StringUtils } from "./StringUtils";
 
 export enum FileFormatToken {
     Year = "year",
@@ -8,6 +8,13 @@ export enum FileFormatToken {
     CombinedLabels = "combinedLabels",
     Filename = "filename",
     Location = "location",
+    // TODO xxx add finer grained location tokens
+    /*
+    country
+    area1,
+    area2,
+    area3
+    */
     FileSizeMb = "fileSizeMb"
 }
 
@@ -20,7 +27,7 @@ export namespace FilenameGenerator {
         let newFileName = format;
 
         tokens.forEach((value, token) => {
-            newFileName = ArrayUtils.replaceAll(newFileName, getTokenWithBraces(token), value);
+            newFileName = StringUtils.replaceAll(newFileName, getTokenWithBraces(token), value);
         });
 
         if (hasTokenMarkers(newFileName)) {

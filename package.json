@@ -69,7 +69,8 @@
         "coveragePathIgnorePatterns": [
             "/node_modules/",
             "/test/",
-            "DirectoryProcessor.ts",
+            "DirectoryProcessor",
+            "GeoCoder",
             "ImageClassifier",
             "ImageMover",
             "main.ts"
@@ -100,6 +101,7 @@
         "@commitlint/config-conventional": "^7.1.2",
         "@types/jest": "^23.3.2",
         "@types/node": "^10.12.11",
+        "@types/node-fetch": "^2.1.4",
         "@types/sharp": "^0.21.0",
         "colors": "^1.3.2",
         "commitizen": "^3.0.0",
@@ -134,6 +136,7 @@
     "dependencies": {
         "@google-cloud/vision": "^0.23.0",
         "exifreader": "^2.5.0",
+        "node-fetch": "^2.3.0",
         "sharp": "^0.21.0",
         "xmldom": "^0.1.27"
     }

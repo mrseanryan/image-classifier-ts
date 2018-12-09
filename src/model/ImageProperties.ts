@@ -4,6 +4,49 @@ import * as path from "path";
 import { ExifTagSet } from "../utils/ExifUtils";
 import { FileUtils } from "../utils/FileUtils";
 import { SimpleDate } from "../utils/SimpleDate";
+import { StringUtils } from "../utils/StringUtils";
+
+// immutable object!
+export class ImageLocation {
+    constructor(
+        readonly country: string,
+        readonly addressLevel1: string,
+        readonly addressLevel2: string,
+        readonly subLocality: string
+    ) {}
+
+    get completionScore(): number {
+        return [
+            {
+                value: this.country,
+                score: 10
+            },
+            {
+                value: this.addressLevel1,
+                score: 5
+            },
+            {
+                value: this.addressLevel2,
+                score: 3
+            },
+            {
+                value: this.subLocality,
+                score: 1
+            }
+        ]
+            .map(entry => {
+                return entry.value.length > 0 ? entry.score : 0;
+            })
+            .reduce((previous, current) => previous + current, 0);
+    }
+
+    toString(): string {
+        return [this.country, this.addressLevel1, this.addressLevel2, this.subLocality]
+            .filter(t => t.length > 0)
+            .map(t => StringUtils.replaceAll(t, " ", "_"))
+            .join("_");
+    }
+}
 
 // immutable object!
 export class ImageProperties {
@@ -12,7 +55,18 @@ export class ImageProperties {
             properties.imagePath,
             properties.topLabels,
             properties.exif,
-            fileSizeMb
+            fileSizeMb,
+            properties.location
+        );
+    }
+
+    static withLocation(properties: ImageProperties, location: ImageLocation): ImageProperties {
+        return new ImageProperties(
+            properties.imagePath,
+            properties.topLabels,
+            properties.exif,
+            properties.fileSizeMb,
+            location
         );
     }
 
@@ -21,7 +75,8 @@ export class ImageProperties {
             properties.imagePath,
             topLabels,
             properties.exif,
-            properties.fileSizeMb
+            properties.fileSizeMb,
+            properties.location
         );
     }
 
@@ -29,7 +84,9 @@ export class ImageProperties {
         readonly imagePath: string,
         readonly topLabels: string[] = [],
         readonly exif: ExifTagSet = new ExifTagSet(),
-        readonly fileSizeMb: number | null = null
+        readonly fileSizeMb: number | null = null,
+        // TODO xxx try to avoid modifying
+        public location: ImageLocation | null = null
     ) {}
 
     get fileSizeMbText(): string {

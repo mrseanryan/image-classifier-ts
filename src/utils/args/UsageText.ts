@@ -13,7 +13,7 @@ export namespace UsageText {
                 `  -help OR -h${NEXT_COLUMN}(show this usage text)`,
                 `  -minScore=<number 0-1>${NEXT_COLUMN}(Include only Google labels that have a score at least this high (0-1))`,
                 `  -dryRun${NEXT_COLUMN}(Perform a 'dry run' without actually moving any files).`,
-                `  -geoLocate${NEXT_COLUMN}(Try to identify the geographical location of the image).`,
+                `  -geoCode${NEXT_COLUMN}(Try to identify the address (geographical location) of the image).`,
                 `  -topNLabels=<number>${NEXT_COLUMN}(Include the top N labels from Google.)`
             ].join(NEW_LINE)
         );

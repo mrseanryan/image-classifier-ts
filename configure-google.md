@@ -1,8 +1,10 @@
 # Configure Google Vision API
 
-Setup a Google Cloud project with the Vision API enabled
+Setup a Google Cloud project
 
--   see [Google documentation](https://cloud.google.com/vision/docs/before-you-begin)
+-   enable the [Google Geo coding API](https://developers.google.com/maps/documentation/geocoding/start)
+
+-   enable the [Google Vision API](https://cloud.google.com/vision/docs/before-you-begin)
 
 -   take a note of the cloud project id.
 
@@ -43,5 +45,6 @@ Rename the file to something like `image-classifier-ts-credentials.json`
 
 -   set environment variable for your OS user:
     GOOGLE_APPLICATION_CREDENTIALS=<path to the JSON file>
+    IMAGE_CLASSIFIER_TS_API_KEY=<your Google Cloud key that has Geolocation + Vision APIs enabled>
 
 -   restart any command prompts

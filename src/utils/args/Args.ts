@@ -7,7 +7,7 @@ export type Args = {
 export type Options = {
     dryRun: boolean;
     filenameFormat: string;
-    geoLocate: boolean;
+    geoCode: boolean;
     minScore: number;
     topNLabels: number;
 };

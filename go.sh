@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-node dist/lib/main $1 $2 $3 $4 $5
+# TODO xxx move main up to dist
+node dist/lib/src/main $1 $2 $3 $4 $5

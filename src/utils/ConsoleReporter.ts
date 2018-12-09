@@ -7,6 +7,9 @@ export namespace ConsoleReporter {
         write("top labels", properties.topLabels.join(", "));
         write("file size", properties.fileSizeMbText);
         write("last modified", properties.modificationDate.toString());
+        if (properties.location) {
+            write("geo location", properties.location.toString());
+        }
         write("exif", "---");
         properties.exif.dump();
         console.log("");

@@ -25,11 +25,7 @@ export namespace ImageMover {
             tokens.set(FileFormatToken.FileSizeMb, imageProps.fileSizeMbText);
         }
 
-        const mapDateToLocation = MapDateToLocation.parseFromCsv(
-            path.dirname(imageProps.imagePath)
-        );
-
-        const location = mapDateToLocation.getLocationForFile(imageProps.imagePath);
+        const location = getLocation(imageProps);
         if (location) {
             tokens.set(FileFormatToken.Location, location);
         } else if (FilenameGenerator.doesFormatIncludeLocation(filenameFormat)) {
@@ -49,5 +45,19 @@ export namespace ImageMover {
         console.log("moving image ", imageProps.imagePath, " => ", newPath);
 
         return renamePromise(imageProps.imagePath, newPath);
+    }
+
+    function getLocation(imageProps: ImageProperties): string | null {
+        const mapDateToLocation = MapDateToLocation.parseFromCsv(
+            path.dirname(imageProps.imagePath)
+        );
+
+        // prefer geo-coding if available:
+        if (imageProps.location && imageProps.location.completionScore > 0) {
+            return imageProps.location.toString();
+        }
+
+        const location = mapDateToLocation.getLocationForFile(imageProps.imagePath);
+        return location;
     }
 }

@@ -77,8 +77,8 @@ export namespace ArgsParser {
                 case "-h":
                 case "-help":
                     throw new HelpNeededError();
-                case "-geoLocate":
-                    args.options.geoLocate = true;
+                case "-geoCode":
+                    args.options.geoCode = true;
                     break;
                 case "-minScore":
                     args.options.minScore = assertHasNumericValue(

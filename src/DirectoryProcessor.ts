@@ -2,11 +2,14 @@ import * as fs from "fs";
 import * as _ from "lodash";
 import * as path from "path";
 
-import { ImageClassifier } from "./ImageClassifier";
+import { ImageClassifier } from "./classify/ImageClassifier";
+import { GeoCoder } from "./geoCode/GeoCoder";
 import { ImageMover } from "./ImageMover";
 import { ImageProperties } from "./model/ImageProperties";
 import { Args } from "./utils/args/Args";
 import { ConsoleReporter } from "./utils/ConsoleReporter";
+import { ExifUtils } from "./utils/ExifUtils";
+import { FileUtils } from "./utils/FileUtils";
 
 let hasError = false;
 const DELAY_BETWEEN_API_REQUESTS_IN_MILLIS = 1000 / 20;
@@ -58,7 +61,7 @@ const isDirectory = (filepath: string) => {
 };
 
 enum Phase {
-    GeoLocate,
+    GeoCode,
     Classify
 }
 
@@ -84,69 +87,83 @@ async function processImageDirectory(args: Args): Promise<undefined> {
     }
     console.log(`found ${files.length} files to process`);
 
-    logThisPhase(Phase.GeoLocate);
-    if (args.options.geoLocate) {
-        await classifyImages(files, Phase.GeoLocate, args);
+    const imageProperties = getAllImageProperties(files, args);
+
+    logThisPhase(Phase.GeoCode);
+    if (args.options.geoCode) {
+        await classifyImages(imageProperties, Phase.GeoCode, args);
     } else {
         console.log("geo locate: skipping - geo locate option is not enabled");
     }
 
     logThisPhase(Phase.Classify);
-    await classifyImages(files, Phase.Classify, args);
+    await classifyImages(imageProperties, Phase.Classify, args);
 }
 
 function logThisPhase(phase: Phase) {
     console.log(`\n=== ${Phase[phase]} phase ===`);
 }
 
-async function classifyImages(files: string[], phase: Phase, args: Args): Promise<undefined> {
+function getAllImageProperties(files: string[], args: Args): ImageProperties[] {
+    return files
+        .map(filepath => {
+            const imagePath = path.join(args.imageInputDir, filepath);
+
+            if (isDirectory(imagePath) || !isFileExtensionOk(imagePath)) {
+                console.warn(`\nskipping file ${imagePath} (is dir or a skipped file extension)`);
+
+                return null;
+            }
+
+            return new ImageProperties(imagePath, [], ExifUtils.readFile(imagePath) || undefined);
+        })
+        .filter(f => !!f) as ImageProperties[];
+}
+
+async function classifyImages(
+    imageProperties: ImageProperties[],
+    phase: Phase,
+    args: Args
+): Promise<undefined> {
     return new Promise<undefined>((resolve, reject) => {
         let i = 0;
         const doNextImage = async () => {
-            if (i < files.length) {
-                let imagePath = files[i];
+            if (i < imageProperties.length) {
+                const thisImageProperties = imageProperties[i];
 
-                let imageInPath = path.join(args.imageInputDir, imagePath);
-                if (!isDirectory(imageInPath) && isFileExtensionOk(imagePath)) {
-                    let isOk = true;
-                    try {
-                        console.log(`\nprocessing image at ${imageInPath}`);
+                let isOk = true;
+                try {
+                    console.log(`\nprocessing image at ${thisImageProperties.imagePath}`);
 
-                        const properties = new ImageProperties(imageInPath);
-
-                        switch (phase) {
-                            case Phase.Classify:
-                                await doClassifyPhaseForImage(properties, args);
-                                break;
-                            case Phase.GeoLocate:
-                                await doGeoLocatePhaseForImage(properties, args);
-                                break;
-                            default:
-                                throw new Error(`unhandled Phase ${[phase]}`);
-                        }
-                    } catch (err) {
-                        console.error("DP: error");
-                        handleError(err);
-                        isOk = false;
+                    switch (phase) {
+                        case Phase.Classify:
+                            await doClassifyPhaseForImage(thisImageProperties, args);
+                            break;
+                        case Phase.GeoCode:
+                            const geoProperties = await doGeoCodePhaseForImage(thisImageProperties);
+                            thisImageProperties.location = geoProperties.location;
+                            break;
+                        default:
+                            throw new Error(`unhandled Phase ${[phase]}`);
                     }
+                } catch (err) {
+                    console.error("DP: error");
+                    handleError(err);
+                    isOk = false;
+                }
 
-                    if (!isOk) {
-                        handleError("DP: error occurred");
-                    }
-                } else {
-                    console.warn(
-                        `\nskipping file ${imagePath} (is dir or a skipped file extension)`
-                    );
+                if (!isOk) {
+                    handleError("DP: error occurred");
                 }
 
                 i++;
 
-                if (i < files.length) {
+                if (i < imageProperties.length) {
                     setTimeout(() => {
                         doNextImage();
                     }, getDelayForPhase(phase));
                 } else {
-                    finish(files.length);
+                    finish(imageProperties.length);
 
                     console.log("DP: resolving");
                     resolve();
@@ -168,8 +185,12 @@ async function doClassifyPhaseForImage(properties: ImageProperties, args: Args) 
     }
 }
 
-async function doGeoLocatePhaseForImage(properties: ImageProperties, args: Args) {
-    // xxx
+async function doGeoCodePhaseForImage(properties: ImageProperties): Promise<ImageProperties> {
+    const geoProps = await GeoCoder.processImage(properties);
+
+    ConsoleReporter.report(geoProps);
+
+    return geoProps;
 }
 
 // Google API quota seems to be average rate per second
@@ -179,7 +200,7 @@ async function doGeoLocatePhaseForImage(properties: ImageProperties, args: Args)
 function getDelayForPhase(phase: Phase): number {
     switch (phase) {
         case Phase.Classify:
-        case Phase.GeoLocate:
+        case Phase.GeoCode:
             return DELAY_BETWEEN_API_REQUESTS_IN_MILLIS;
         default:
             throw new Error(`unhandled Phase ${[phase]}`);
