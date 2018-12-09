@@ -49,7 +49,19 @@ see [configure Google API](configure-google.md).
 
 ### 3 Classify your images
 
-On Windows: use a bash shell like `git bash`.
+*note: the processed images will be moved to the output directory. so you may want to point 'input directory' to a *copy* of your images directory.*
+
+#### from the npm package
+
+Inside your npm project:
+
+`yarn add image-classifier-ts`
+
+`node node_modules/image-classifier-ts/dist/lib/main.js <input directory> <output directory>`
+
+#### from the source code
+
+_On Windows: use a bash shell like `git bash`._
 
 To test your installation:
 
@@ -69,13 +81,13 @@ To see more detailed usage info:
 ./go
 ```
 
-#### example:
+##### example:
 
 ```
 ./go ../my-photos {year}/{location}/{topLabel}/{combinedLabels}--{filename}
 ```
 
-#### advanced - specifying locations by date
+##### advanced - specifying locations by date
 
 You can specify locations for the photos, by date.
 
