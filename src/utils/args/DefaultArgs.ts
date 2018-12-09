@@ -15,7 +15,7 @@ export namespace DefaultArgs {
         return {
             dryRun: false,
             filenameFormat: "{year}/{topLabel}/{combinedLabels}--{filename}",
-            locate: false,
+            geoLocate: false,
             minScore: 0.7,
             topNLabels: 3
         };

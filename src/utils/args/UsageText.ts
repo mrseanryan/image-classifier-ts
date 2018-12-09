@@ -11,10 +11,10 @@ export namespace UsageText {
                 `  -filenameFormat=<format>`,
                 `    example: -filenameFormat={year}/{location}/{topLabel}/{combinedLabels}-{fileSizeMb}--{filename}`,
                 `  -help OR -h${NEXT_COLUMN}(show this usage text)`,
-                `  -minScore${NEXT_COLUMN}(Include only Google labels that have a score at least this high (0-1))`,
+                `  -minScore=<number 0-1>${NEXT_COLUMN}(Include only Google labels that have a score at least this high (0-1))`,
                 `  -dryRun${NEXT_COLUMN}(Perform a 'dry run' without actually moving any files).`,
-                `  -locate${NEXT_COLUMN}(Try to identify the geographical location of the image).`,
-                `  -topNLabels${NEXT_COLUMN}(Include the top N labels from Google.)`
+                `  -geoLocate${NEXT_COLUMN}(Try to identify the geographical location of the image).`,
+                `  -topNLabels=<number>${NEXT_COLUMN}(Include the top N labels from Google.)`
             ].join(NEW_LINE)
         );
     }

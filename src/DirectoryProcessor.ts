@@ -57,6 +57,11 @@ const isDirectory = (filepath: string) => {
     return fs.lstatSync(filepath).isDirectory();
 };
 
+enum Phase {
+    GeoLocate,
+    Classify
+}
+
 async function processImageDirectory(args: Args): Promise<undefined> {
     const readdirPromise = () => {
         return new Promise<string[]>(function(ok, notOk) {
@@ -79,12 +84,23 @@ async function processImageDirectory(args: Args): Promise<undefined> {
     }
     console.log(`found ${files.length} files to process`);
 
-    return new Promise<undefined>((resolve, reject) => {
-        // google API quota seems to be average rate per second
-        // rather than 'total within 100s'.
-        //
-        // so deliberately slowing down the request rate, to avoid hitting the quota:
+    logThisPhase(Phase.GeoLocate);
+    if (args.options.geoLocate) {
+        await classifyImages(files, Phase.GeoLocate, args);
+    } else {
+        console.log("geo locate: skipping - geo locate option is not enabled");
+    }
 
+    logThisPhase(Phase.Classify);
+    await classifyImages(files, Phase.Classify, args);
+}
+
+function logThisPhase(phase: Phase) {
+    console.log(`\n=== ${Phase[phase]} phase ===`);
+}
+
+async function classifyImages(files: string[], phase: Phase, args: Args): Promise<undefined> {
+    return new Promise<undefined>((resolve, reject) => {
         let i = 0;
         const doNextImage = async () => {
             if (i < files.length) {
@@ -98,19 +114,15 @@ async function processImageDirectory(args: Args): Promise<undefined> {
 
                         const properties = new ImageProperties(imageInPath);
 
-                        const imageProps = await ImageClassifier.classifyImage(
-                            properties,
-                            args.options
-                        );
-
-                        ConsoleReporter.report(imageProps);
-
-                        if (!args.options.dryRun) {
-                            await ImageMover.move(
-                                imageProps,
-                                args.options.filenameFormat,
-                                args.imageOutputDir
-                            );
+                        switch (phase) {
+                            case Phase.Classify:
+                                await doClassifyPhaseForImage(properties, args);
+                                break;
+                            case Phase.GeoLocate:
+                                await doGeoLocatePhaseForImage(properties, args);
+                                break;
+                            default:
+                                throw new Error(`unhandled Phase ${[phase]}`);
                         }
                     } catch (err) {
                         console.error("DP: error");
@@ -132,7 +144,7 @@ async function processImageDirectory(args: Args): Promise<undefined> {
                 if (i < files.length) {
                     setTimeout(() => {
                         doNextImage();
-                    }, DELAY_BETWEEN_API_REQUESTS_IN_MILLIS);
+                    }, getDelayForPhase(phase));
                 } else {
                     finish(files.length);
 
@@ -144,4 +156,32 @@ async function processImageDirectory(args: Args): Promise<undefined> {
 
         doNextImage();
     });
+}
+
+async function doClassifyPhaseForImage(properties: ImageProperties, args: Args) {
+    const imageProps = await ImageClassifier.classifyImage(properties, args.options);
+
+    ConsoleReporter.report(imageProps);
+
+    if (!args.options.dryRun) {
+        await ImageMover.move(imageProps, args.options.filenameFormat, args.imageOutputDir);
+    }
+}
+
+async function doGeoLocatePhaseForImage(properties: ImageProperties, args: Args) {
+    // xxx
+}
+
+// Google API quota seems to be average rate per second
+// rather than 'total within 100s'.
+//
+// so deliberately slowing down the request rate, to avoid hitting the quota:
+function getDelayForPhase(phase: Phase): number {
+    switch (phase) {
+        case Phase.Classify:
+        case Phase.GeoLocate:
+            return DELAY_BETWEEN_API_REQUESTS_IN_MILLIS;
+        default:
+            throw new Error(`unhandled Phase ${[phase]}`);
+    }
 }
