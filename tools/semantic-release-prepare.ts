@@ -5,10 +5,10 @@ const colors = require("colors");
 const { readFileSync, writeFileSync } = require("fs");
 const pkg = JSON.parse(readFileSync(path.resolve(__dirname, "..", "package.json")));
 
-package.scripts.prepush = "npm run test:prod";
-package.scripts.commitmsg = "commitlint -E GIT_PARAMS";
+pkg.scripts.prepush = "npm run test:prod";
+pkg.scripts.commitmsg = "commitlint -E GIT_PARAMS";
 
-writeFileSync(path.resolve(__dirname, "..", "package.json"), JSON.stringify(package, null, 2));
+writeFileSync(path.resolve(__dirname, "..", "package.json"), JSON.stringify(pkg, null, 2));
 
 // Call husky to set up the hooks
 fork(path.resolve(__dirname, "..", "node_modules", "husky", "bin", "install"));
@@ -17,7 +17,7 @@ console.log();
 console.log(colors.green("Done!!"));
 console.log();
 
-if (package.repository.url.trim()) {
+if (pkg.repository.url.trim()) {
     console.log(colors.cyan("Now run:"));
     console.log(colors.cyan("  npm install -g semantic-release-cli"));
     console.log(colors.cyan("  semantic-release-cli setup"));
