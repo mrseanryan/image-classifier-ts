@@ -1,4 +1,3 @@
-// TODO xxx refactor this file!
 // - replace callbacks with promise - async/await
 import * as fs from "fs";
 import * as _ from "lodash";
@@ -7,78 +6,66 @@ import * as path from "path";
 import * as sharp from "sharp";
 
 import { GoogleVision } from "./GoogleVision";
+import { ImageProperties } from "./model/ImageProperties";
 import { ArrayUtils } from "./utils/ArrayUtils";
-import { FileFormatToken, FilenameGenerator, FileNameTokens } from "./utils/FilenameGenerator";
-import { FileUtils } from "./utils/FileUtils";
-import { DEFAULT_LOCATION, MapDateToLocation } from "./utils/MapDateToLocation";
 
 const vision = require("@google-cloud/vision");
 
+// TODO xxx move out to DefaultArgs
 const MIN_SCORE_ACCEPTED = 0.7;
 const TOP_N_LABELS = 3;
 
 const visionClient = new vision.ImageAnnotatorClient();
 
 export namespace ImageClassifier {
-    export async function classifyImageAndMoveIt(
-        topImagePath: string,
-        filenameFormat: string,
-        imageOutputDir: string
-    ): Promise<boolean> {
-        return new Promise<boolean>((resolve, reject) => {
-            _classifyImageAndMoveIt(
-                topImagePath,
-                filenameFormat,
-                imageOutputDir,
+    // TODO xxx add option type: topN=3, minScore
+    export async function classifyImage(properties: ImageProperties): Promise<ImageProperties> {
+        return new Promise<ImageProperties>((resolve, reject) => {
+            _classifyImageWithResize(
+                properties,
                 error => {
-                    console.error(`error with file ${topImagePath}`, error);
+                    console.error(`error with file ${properties.imagePath}`, error);
                     reject(error);
                 },
-                () => resolve(true)
+                newProperties => resolve(newProperties)
             );
         });
     }
 
-    export function _classifyImageAndMoveIt(
-        topImagePath: string,
-        filenameFormat: string,
-        imageOutputDir: string,
+    export function _classifyImageWithResize(
+        properties: ImageProperties,
         handleError: (error: any) => void,
-        done: () => void
+        done: (newProperties: ImageProperties) => void
     ) {
-        console.log(`detecting labels in image: '${topImagePath}'`);
+        console.log(`detecting labels in image: '${properties.imagePath}'`);
 
-        let fileSizeMb = getFilesizeInMegaBytes(topImagePath);
-        if (fileSizeMb > 0.5) {
-            console.log(`    'file is large! - ${fileSizeMb} Mb - will use resized copy...`);
+        const activeProperties = ImageProperties.withFileSizeMb(
+            properties,
+            getFilesizeInMegaBytes(properties.imagePath)
+        );
+        if (activeProperties.fileSizeMb === null) {
+            handleError(`could not get file size for image '${activeProperties.imagePath}'`);
+            done(activeProperties);
+            return;
+        }
+        if (activeProperties.fileSizeMb > 0.5) {
+            console.log(
+                `    'file is large! - ${activeProperties.fileSizeMb} Mb - will use resized copy...`
+            );
 
-            resizeImage(topImagePath, handleError, (newImagePath, err) => {
+            resizeImage(activeProperties.imagePath, handleError, (resizedImagePath, err) => {
                 if (err) {
                     handleError(err);
                 } else {
-                    if (!newImagePath) {
+                    if (!resizedImagePath) {
                         throw new Error("unexpected: newImagePath is not set!");
                     }
 
-                    classifyAndMoveSmallImage(
-                        newImagePath,
-                        topImagePath,
-                        imageOutputDir,
-                        filenameFormat,
-                        handleError,
-                        done
-                    );
+                    classifySmallImage(activeProperties, handleError, done);
                 }
             });
         } else {
-            classifyAndMoveSmallImage(
-                topImagePath,
-                topImagePath,
-                imageOutputDir,
-                filenameFormat,
-                handleError,
-                done
-            );
+            classifySmallImage(activeProperties, handleError, done);
         }
     }
 
@@ -116,10 +103,10 @@ export namespace ImageClassifier {
         });
     };
 
-    const classifyImage = (
+    const _classifyImage = (
         imagePath: string,
         handleError: (error: any) => void,
-        cb: (topDesc: string | null, combinedDesc: string | null) => void
+        cb: (topNLabels: string[] | null) => void
     ) => {
         console.info("  classifying image:", imagePath);
 
@@ -133,8 +120,7 @@ export namespace ImageClassifier {
             .then((results: any) => {
                 const labels = results[0].labelAnnotations as GoogleVision.LabelAnnotation[];
 
-                let topDesc = null;
-                let combinedDesc = null;
+                let topNLabels = null;
 
                 if (labels && labels.length > 0) {
                     // note: results already have the best one first:
@@ -146,16 +132,14 @@ export namespace ImageClassifier {
                     ).map(l => ArrayUtils.replaceAll(l.description, " ", "-"));
 
                     if (topLabels.length > 0) {
-                        topDesc = topLabels[0];
-
-                        combinedDesc = topLabels.join("_");
+                        topNLabels = topLabels;
                     }
                 } else {
                     console.error("no labels returned from API!");
                 }
 
                 // TODO xxx replace cb with async await
-                cb(topDesc, combinedDesc);
+                cb(topNLabels);
             })
             .catch((err: any) => {
                 handleError(err);
@@ -167,66 +151,19 @@ export namespace ImageClassifier {
         return ["vertebrate"].indexOf(label) === -1;
     };
 
-    const moveImage = (
-        imagePath2: string,
-        outDir: string,
-        topDesc: string,
-        combinedDesc: string,
-        filenameFormat: string,
-        cb: (error: any) => void
-    ) => {
-        const tokens: FileNameTokens = new Map<FileFormatToken, string>();
-        {
-            let filename = path.basename(imagePath2);
-            tokens.set(FileFormatToken.Filename, filename);
-            tokens.set(FileFormatToken.TopLabel, topDesc);
-            tokens.set(FileFormatToken.CombinedLabels, combinedDesc);
-            tokens.set(FileFormatToken.Year, FileUtils.getModificationYearOfFile(imagePath2));
-        }
-
-        const mapDateToLocation = MapDateToLocation.parseFromCsv(path.dirname(imagePath2));
-
-        tokens.set(
-            FileFormatToken.Location,
-            mapDateToLocation.getLocationForFile(imagePath2) || DEFAULT_LOCATION
-        );
-
-        const newFilename = FilenameGenerator.generateFilename(tokens, filenameFormat);
-
-        const subDir = path.dirname(newFilename);
-        FileUtils.ensureSubDirsExist(outDir, subDir);
-
-        const newPath = path.join(outDir, newFilename);
-
-        console.log("moving image ", imagePath2, " => ", newPath);
-        fs.rename(imagePath2, newPath, cb);
-    };
-
-    const classifyAndMoveSmallImage = (
-        imagePath2: string,
-        originalImagePath: string,
-        imageOutputDir: string,
-        filenameFormat: string,
+    const classifySmallImage = (
+        properties: ImageProperties,
         handleError: (error: any) => void,
-        done: () => void
+        done: (properties: ImageProperties) => void
     ) => {
-        classifyImage(imagePath2, handleError, (topDesc, combinedDesc) => {
-            if (topDesc) {
-                if (!combinedDesc) {
-                    throw new Error("unexpected - topDesc is set but not combinedDesc");
-                }
+        _classifyImage(properties.imagePath, handleError, topNLabels => {
+            if (topNLabels) {
+                const activeProperties = ImageProperties.withTopLabels(properties, topNLabels);
 
-                moveImage(
-                    originalImagePath,
-                    imageOutputDir,
-                    topDesc,
-                    combinedDesc,
-                    filenameFormat,
-                    done
-                );
+                done(activeProperties);
             } else {
-                console.warn("skipping image - no label");
-                done();
+                console.warn("got no labels from Google");
+                done(properties);
             }
         });
     };

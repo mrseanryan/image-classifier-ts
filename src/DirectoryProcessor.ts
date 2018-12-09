@@ -2,9 +2,11 @@
 import * as fs from "fs";
 import * as _ from "lodash";
 import * as path from "path";
-import { cat } from "shelljs";
 
+import { ConsoleReporter } from "./ConsoleReporter";
 import { ImageClassifier } from "./ImageClassifier";
+import { ImageMover } from "./ImageMover";
+import { ImageProperties } from "./model/ImageProperties";
 
 let hasError = false;
 const DELAY_BETWEEN_API_REQUESTS_IN_MILLIS = 1000 / 20;
@@ -102,11 +104,14 @@ async function processImageDirectory(
                     try {
                         console.log(`\nprocessing image at ${imageInPath}`);
 
-                        isOk = await ImageClassifier.classifyImageAndMoveIt(
-                            imageInPath,
-                            filenameFormat,
-                            imageOutputDir
-                        );
+                        const properties = new ImageProperties(imageInPath);
+
+                        const imageProps = await ImageClassifier.classifyImage(properties);
+
+                        ConsoleReporter.report(imageProps);
+
+                        // TODO xxx only move if --move
+                        await ImageMover.move(imageProps, filenameFormat, imageOutputDir);
                     } catch (err) {
                         console.error("DP: error");
                         handleError(err);

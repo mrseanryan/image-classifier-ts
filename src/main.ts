@@ -2,7 +2,6 @@ import * as _ from "lodash";
 import * as os from "os";
 
 import { DirectoryProcessor } from "./DirectoryProcessor";
-import { ImageClassifier } from "./ImageClassifier";
 
 let imageInputDir = "";
 let imageOutputDir = os.tmpdir();
