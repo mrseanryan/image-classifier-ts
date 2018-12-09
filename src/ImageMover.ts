@@ -5,7 +5,7 @@ import { promisify } from "util";
 import { ImageProperties } from "./model/ImageProperties";
 import { FileFormatToken, FilenameGenerator, FileNameTokens } from "./utils/FilenameGenerator";
 import { FileUtils } from "./utils/FileUtils";
-import { DEFAULT_LOCATION, MapDateToLocation } from "./utils/MapDateToLocation";
+import { MapDateToLocation } from "./utils/MapDateToLocation";
 
 const renamePromise = promisify(fs.rename);
 
@@ -29,10 +29,15 @@ export namespace ImageMover {
             path.dirname(imageProps.imagePath)
         );
 
-        tokens.set(
-            FileFormatToken.Location,
-            mapDateToLocation.getLocationForFile(imageProps.imagePath) || DEFAULT_LOCATION
-        );
+        const location = mapDateToLocation.getLocationForFile(imageProps.imagePath);
+        if (location) {
+            tokens.set(FileFormatToken.Location, location);
+        } else if (FilenameGenerator.doesFormatIncludeLocation(filenameFormat)) {
+            console.warn(
+                `skipping: Filename format includes a location, but the location of this photo is unknown.`
+            );
+            return Promise.resolve();
+        }
 
         const newFilename = FilenameGenerator.generateFilename(tokens, filenameFormat);
 

@@ -12,7 +12,7 @@ let _showUsage = () => {
     console.log(
         `USAGE: ${scriptName} <path to input dir> <path to output dir> [file format]`,
         `  where file format is like:`,
-        `    {year}/{topLabel}/{combinedLabels}--{filename}`
+        `    {year}/{location}/{topLabel}/{combinedLabels}-{fileSizeMb}--{filename}`
     );
 };
 

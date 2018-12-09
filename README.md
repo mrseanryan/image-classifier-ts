@@ -95,9 +95,9 @@ Do this by adding a file named `mapDateToLocation.csv` in the same folder as you
 
 The approprite location description will be used when renaming the image files.
 
-For an example, see [mapDateToLocation.csv](./static/testData/singleWithLocation/mapDateToLocation.csv)
+For an example, see [mapDateToLocation.csv](./static/testData/withLocation/mapDateToLocation.csv)
 
-note: the default for {location} is 'unknown-location'.
+note: if the location is unknown, and the filename format includes `{location}`, then the image will NOT be moved.
 
 ## sites
 

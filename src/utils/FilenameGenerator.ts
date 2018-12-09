@@ -20,7 +20,7 @@ export namespace FilenameGenerator {
         let newFileName = format;
 
         tokens.forEach((value, token) => {
-            newFileName = ArrayUtils.replaceAll(newFileName, `{${token}}`, value);
+            newFileName = ArrayUtils.replaceAll(newFileName, getTokenWithBraces(token), value);
         });
 
         if (hasTokenMarkers(newFileName)) {
@@ -32,6 +32,10 @@ export namespace FilenameGenerator {
         return newFileName;
     }
 
+    function getTokenWithBraces(token: string): string {
+        return `{${token}}`;
+    }
+
     function validateFormat(format: string) {
         if (!hasTokenMarkers(format)) {
             throw new Error("Invalid file name format");
@@ -40,5 +44,9 @@ export namespace FilenameGenerator {
 
     function hasTokenMarkers(format: string): boolean {
         return format.indexOf("{") > -1 || format.indexOf("}") > -1;
+    }
+
+    export function doesFormatIncludeLocation(format: string): boolean {
+        return format.indexOf(getTokenWithBraces(FileFormatToken.Location)) >= 0;
     }
 }

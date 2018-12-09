@@ -7,7 +7,7 @@ describe("FilenameGenerator tests", () => {
     it("it should handle a complex format", () => {
         let filenameFormat = "{year}/{location}/{topLabel}/{combinedLabels}--{filename}";
 
-        const imagePath = "./static/testData/singleWithLocation/2018-07-15 16.57.48.jpg";
+        const imagePath = "./static/testData/withLocation/2018-07-15 16.57.48.jpg";
 
         const topDesc = "bird";
         const combinedDesc = "bird_feather_seagull";

@@ -6,8 +6,6 @@ import { SimpleDate } from "./SimpleDate";
 
 const DATE_MAP_CSV_FILENAME = "mapDateToLocation.csv";
 
-export const DEFAULT_LOCATION = "unknown-location";
-
 export class MapDateToLocation {
     static parseFromCsv(pathToDirectory: string): MapDateToLocation {
         const filepath = path.join(pathToDirectory, DATE_MAP_CSV_FILENAME);
