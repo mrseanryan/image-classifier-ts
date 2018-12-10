@@ -15,7 +15,7 @@ export namespace ImageMover {
         filenameFormat: string,
         imageOutputDir: string,
         mapDateToLocationManager: MapDateToLocationManager
-    ): Promise<void> {
+    ): Promise<boolean> {
         const tokens: FileNameTokens = new Map<FileFormatToken, string>();
         {
             const filename = path.basename(imageProps.imagePath);
@@ -34,8 +34,7 @@ export namespace ImageMover {
                 `skipping: Filename format includes a location, but the location of this photo is unknown.`
             );
 
-            // TODO xxx return true if moved - then can count total number of images moved
-            return Promise.resolve();
+            return false;
         }
 
         const newFilename = FilenameGenerator.generateFilename(tokens, filenameFormat);
@@ -47,7 +46,9 @@ export namespace ImageMover {
 
         console.log("moving image ", imageProps.imagePath, " => ", newPath);
 
-        return renamePromise(imageProps.imagePath, newPath);
+        await renamePromise(imageProps.imagePath, newPath);
+
+        return true;
     }
 
     function getLocation(

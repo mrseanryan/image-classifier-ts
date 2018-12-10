@@ -19,7 +19,8 @@ const DELAY_BETWEEN_API_REQUESTS_IN_MILLIS = 1000 / 20;
 export namespace DirectoryProcessor {
     export async function processDirectory(args: Args): Promise<boolean> {
         try {
-            await processImageDirectory(args);
+            const results = await processImageDirectory(args);
+            dumpResults(results);
 
             console.log("[processDirectory] - done");
             return !hasError;
@@ -28,6 +29,12 @@ export namespace DirectoryProcessor {
             return false;
         }
     }
+}
+
+function dumpResults(results: ResultsByPhase) {
+    results.forEach((value, key) => {
+        console.log(Phase[key], value);
+    });
 }
 
 const handleError = (err: any) => {
@@ -64,10 +71,12 @@ const isDirectory = (filepath: string) => {
 
 enum Phase {
     GeoCode,
-    Classify
+    ClassifyAndMove
 }
 
-async function processImageDirectory(args: Args): Promise<undefined> {
+export type ResultsByPhase = Map<Phase, ProcessResultForPhase>;
+
+async function processImageDirectory(args: Args): Promise<ResultsByPhase> {
     const readdirPromise = () => {
         return new Promise<string[]>(function(ok, notOk) {
             fs.readdir(args.imageInputDir, function(err, _files) {
@@ -81,11 +90,13 @@ async function processImageDirectory(args: Args): Promise<undefined> {
     };
 
     let files: string[];
+    const resultsByPhase: ResultsByPhase = new Map<Phase, ProcessResultForPhase>();
+
     try {
         files = await readdirPromise();
     } catch (error) {
         console.error(error);
-        return;
+        return resultsByPhase;
     }
     console.log(`found ${files.length} files to process`);
 
@@ -97,15 +108,29 @@ async function processImageDirectory(args: Args): Promise<undefined> {
 
     logThisPhase(Phase.GeoCode);
     if (args.options.geoCode) {
-        await processImagesForPhase(imageProperties, Phase.GeoCode, args, mapDateToLocationManager);
+        const geoResult = await processImagesForPhase(
+            imageProperties,
+            Phase.GeoCode,
+            args,
+            mapDateToLocationManager
+        );
+        resultsByPhase.set(Phase.GeoCode, geoResult);
     } else {
         console.log("geo locate: skipping - geo locate option is not enabled");
     }
 
     mapDateToLocationManager.dumpAutoMapToDisk(args.imageInputDir);
 
-    logThisPhase(Phase.Classify);
-    await processImagesForPhase(imageProperties, Phase.Classify, args, mapDateToLocationManager);
+    logThisPhase(Phase.ClassifyAndMove);
+    const classifyResult = await processImagesForPhase(
+        imageProperties,
+        Phase.ClassifyAndMove,
+        args,
+        mapDateToLocationManager
+    );
+    resultsByPhase.set(Phase.ClassifyAndMove, classifyResult);
+
+    return resultsByPhase;
 }
 
 function logThisPhase(phase: Phase) {
@@ -128,13 +153,20 @@ function getAllImageProperties(files: string[], args: Args): ImageProperties[] {
         .filter(f => !!f) as ImageProperties[];
 }
 
+type ProcessResultForPhase = {
+    imagesProcessedOk: number;
+};
+
 async function processImagesForPhase(
     imageProperties: ImageProperties[],
     phase: Phase,
     args: Args,
     mapDateToLocationManager: MapDateToLocationManager
-): Promise<undefined> {
-    return new Promise<undefined>((resolve, reject) => {
+): Promise<ProcessResultForPhase> {
+    return new Promise<ProcessResultForPhase>((resolve, reject) => {
+        let result: ProcessResultForPhase = {
+            imagesProcessedOk: 0
+        };
         let i = 0;
         const doNextImage = async () => {
             if (i < imageProperties.length) {
@@ -145,12 +177,15 @@ async function processImagesForPhase(
                     console.log(`\nprocessing image at ${thisImageProperties.imagePath}`);
 
                     switch (phase) {
-                        case Phase.Classify:
-                            await doClassifyPhaseForImage(
+                        case Phase.ClassifyAndMove:
+                            const didMove = await doClassifyPhaseForImage(
                                 thisImageProperties,
                                 args,
                                 mapDateToLocationManager
                             );
+                            if (didMove) {
+                                result.imagesProcessedOk++;
+                            }
                             break;
                         case Phase.GeoCode:
                             const geoProperties = await doGeoCodePhaseForImage(
@@ -159,6 +194,10 @@ async function processImagesForPhase(
                                 mapDateToLocationManager.autoMap
                             );
                             thisImageProperties.location = geoProperties.location;
+
+                            if (geoProperties.location) {
+                                result.imagesProcessedOk++;
+                            }
                             break;
                         default:
                             throw new Error(`unhandled Phase ${[phase]}`);
@@ -183,7 +222,7 @@ async function processImagesForPhase(
                     finish(imageProperties.length);
 
                     console.log("DP: resolving");
-                    resolve();
+                    resolve(result);
                 }
             }
         };
@@ -196,19 +235,21 @@ async function doClassifyPhaseForImage(
     properties: ImageProperties,
     args: Args,
     mapDateToLocationManager: MapDateToLocationManager
-) {
+): Promise<boolean> {
     const imageProps = await ImageClassifier.classifyImage(properties, args.options);
 
     ConsoleReporter.report(imageProps);
 
     if (!args.options.dryRun) {
-        await ImageMover.move(
+        return await ImageMover.move(
             imageProps,
             args.options.filenameFormat,
             args.imageOutputDir,
             mapDateToLocationManager
         );
     }
+
+    return false;
 }
 
 async function doGeoCodePhaseForImage(
@@ -229,7 +270,7 @@ async function doGeoCodePhaseForImage(
 // so deliberately slowing down the request rate, to avoid hitting the quota:
 function getDelayForPhase(phase: Phase): number {
     switch (phase) {
-        case Phase.Classify:
+        case Phase.ClassifyAndMove:
         case Phase.GeoCode:
             return DELAY_BETWEEN_API_REQUESTS_IN_MILLIS;
         default:
