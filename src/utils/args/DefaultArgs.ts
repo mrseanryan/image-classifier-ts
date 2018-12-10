@@ -16,6 +16,7 @@ export namespace DefaultArgs {
             dryRun: false,
             filenameFormat: "{year}/{topLabel}/{combinedLabels}--{filename}",
             geoCode: false,
+            locationFormat: "{country}_{area1}_{area2}_{area3}",
             minScore: 0.7,
             topNLabels: 3
         };

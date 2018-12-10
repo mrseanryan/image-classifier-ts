@@ -6,7 +6,10 @@ import { ExifTag } from "../utils/ExifUtils";
 import { GeoCodeResponseParser } from "./GeoCodeResponseParser";
 
 export namespace GeoCoder {
-    export async function processImage(properties: ImageProperties): Promise<ImageProperties> {
+    export async function processImage(
+        properties: ImageProperties,
+        options: Options
+    ): Promise<ImageProperties> {
         if (!properties.exif.isLatLongOk()) {
             return properties;
         }
@@ -19,7 +22,7 @@ export namespace GeoCoder {
         );
         const json = await rsp.json();
 
-        return GeoCodeResponseParser.parseResponse(properties, json);
+        return GeoCodeResponseParser.parseResponse(properties, json, options);
     }
 
     function getUrl(lat: string, long: string) {

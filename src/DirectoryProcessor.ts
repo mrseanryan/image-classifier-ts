@@ -6,7 +6,7 @@ import { ImageClassifier } from "./classify/ImageClassifier";
 import { GeoCoder } from "./geoCode/GeoCoder";
 import { ImageMover } from "./ImageMover";
 import { ImageProperties } from "./model/ImageProperties";
-import { Args } from "./utils/args/Args";
+import { Args, Options } from "./utils/args/Args";
 import { ConsoleReporter } from "./utils/ConsoleReporter";
 import { ExifUtils } from "./utils/ExifUtils";
 import { FileUtils } from "./utils/FileUtils";
@@ -140,7 +140,10 @@ async function classifyImages(
                             await doClassifyPhaseForImage(thisImageProperties, args);
                             break;
                         case Phase.GeoCode:
-                            const geoProperties = await doGeoCodePhaseForImage(thisImageProperties);
+                            const geoProperties = await doGeoCodePhaseForImage(
+                                thisImageProperties,
+                                args.options
+                            );
                             thisImageProperties.location = geoProperties.location;
                             break;
                         default:
@@ -185,8 +188,11 @@ async function doClassifyPhaseForImage(properties: ImageProperties, args: Args) 
     }
 }
 
-async function doGeoCodePhaseForImage(properties: ImageProperties): Promise<ImageProperties> {
-    const geoProps = await GeoCoder.processImage(properties);
+async function doGeoCodePhaseForImage(
+    properties: ImageProperties,
+    options: Options
+): Promise<ImageProperties> {
+    const geoProps = await GeoCoder.processImage(properties, options);
 
     ConsoleReporter.report(geoProps);
 

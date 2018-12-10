@@ -1,8 +1,13 @@
 import { ImageLocation, ImageProperties } from "../model/ImageProperties";
+import { Options } from "../utils/args/Args";
 
 export namespace GeoCodeResponseParser {
     // exported so can unit test
-    export function parseResponse(properties: ImageProperties, responseJson: any): ImageProperties {
+    export function parseResponse(
+        properties: ImageProperties,
+        responseJson: any,
+        options: Options
+    ): ImageProperties {
         if (!responseJson) {
             console.warn("no response from geo coding service!");
 
@@ -20,7 +25,8 @@ export namespace GeoCodeResponseParser {
                     extractAddressComponent(result, "country", false),
                     extractAddressComponent(result, "administrative_area_level_1"),
                     extractAddressComponent(result, "administrative_area_level_2"),
-                    extractAddressComponent(result, "sublocality_level_1")
+                    extractAddressComponent(result, "sublocality_level_1"),
+                    options.locationFormat
                 )
             );
 

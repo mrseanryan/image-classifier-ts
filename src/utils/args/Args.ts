@@ -8,6 +8,7 @@ export type Options = {
     dryRun: boolean;
     filenameFormat: string;
     geoCode: boolean;
+    locationFormat: string;
     minScore: number;
     topNLabels: number;
 };

@@ -80,6 +80,11 @@ export namespace ArgsParser {
                 case "-geoCode":
                     args.options.geoCode = true;
                     break;
+                case "-locationFormat":
+                    args.options.locationFormat = assertHasValue(
+                        "locationFormat must have a value, like locationFormat={country}_{area1}_{area2}_{area3}"
+                    );
+                    break;
                 case "-minScore":
                     args.options.minScore = assertHasNumericValue(
                         "minScore must have a value, like: minScore=0.8"

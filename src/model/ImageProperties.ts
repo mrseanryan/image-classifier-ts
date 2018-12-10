@@ -1,6 +1,8 @@
 import { pathExists } from "fs-extra";
 import * as path from "path";
+import { stringify } from "querystring";
 
+import { LocationFormatToken, LocationNameGenerator } from "../geoCode/LocationNameGenerator";
 import { ExifTagSet } from "../utils/ExifUtils";
 import { FileUtils } from "../utils/FileUtils";
 import { SimpleDate } from "../utils/SimpleDate";
@@ -12,7 +14,8 @@ export class ImageLocation {
         readonly country: string,
         readonly addressLevel1: string,
         readonly addressLevel2: string,
-        readonly subLocality: string
+        readonly subLocality: string,
+        private readonly locationFormat: string
     ) {}
 
     get completionScore(): number {
@@ -41,10 +44,17 @@ export class ImageLocation {
     }
 
     toString(): string {
-        return [this.country, this.addressLevel1, this.addressLevel2, this.subLocality]
-            .filter(t => t.length > 0)
-            .map(t => StringUtils.replaceAll(t, " ", "_"))
-            .join("_");
+        const tokens = new Map<LocationFormatToken, string>();
+        tokens.set(LocationFormatToken.Country, this.cleanValue(this.country));
+        tokens.set(LocationFormatToken.Area1, this.cleanValue(this.addressLevel1));
+        tokens.set(LocationFormatToken.Area2, this.cleanValue(this.addressLevel2));
+        tokens.set(LocationFormatToken.Area3, this.cleanValue(this.subLocality));
+
+        return LocationNameGenerator.generate(tokens, this.locationFormat);
+    }
+
+    private cleanValue(value: string): string {
+        return StringUtils.replaceAll(value.trim(), " ", "_");
     }
 }
 
