@@ -3,12 +3,14 @@ import * as nodeFetch from "node-fetch";
 import { ImageProperties } from "../model/ImageProperties";
 import { Options } from "../utils/args/Args";
 import { ExifTag } from "../utils/ExifUtils";
+import { MapDateToLocation } from "../utils/MapDateToLocation";
 import { GeoCodeResponseParser } from "./GeoCodeResponseParser";
 
 export namespace GeoCoder {
     export async function processImage(
         properties: ImageProperties,
-        options: Options
+        options: Options,
+        autoMapDateToLocation: MapDateToLocation
     ): Promise<ImageProperties> {
         if (!properties.exif.isLatLongOk()) {
             return properties;
@@ -22,7 +24,17 @@ export namespace GeoCoder {
         );
         const json = await rsp.json();
 
-        return GeoCodeResponseParser.parseResponse(properties, json, options);
+        const newProperties = GeoCodeResponseParser.parseResponse(properties, json, options);
+
+        if (newProperties.location) {
+            // TODO - could store multiple locations per date, and match to nearest hour
+            autoMapDateToLocation.setLocationForDate(
+                newProperties.modificationDate,
+                newProperties.location.toString()
+            );
+        }
+
+        return newProperties;
     }
 
     function getUrl(lat: string, long: string) {

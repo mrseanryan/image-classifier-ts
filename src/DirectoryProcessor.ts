@@ -10,6 +10,8 @@ import { Args, Options } from "./utils/args/Args";
 import { ConsoleReporter } from "./utils/ConsoleReporter";
 import { ExifUtils } from "./utils/ExifUtils";
 import { FileUtils } from "./utils/FileUtils";
+import { MapDateToLocation } from "./utils/MapDateToLocation";
+import { MapDateToLocationManager } from "./utils/MapDateToLocationManager";
 
 let hasError = false;
 const DELAY_BETWEEN_API_REQUESTS_IN_MILLIS = 1000 / 20;
@@ -89,15 +91,21 @@ async function processImageDirectory(args: Args): Promise<undefined> {
 
     const imageProperties = getAllImageProperties(files, args);
 
+    const mapDateToLocationManager = MapDateToLocationManager.fromImageDirectory(
+        path.dirname(args.imageInputDir)
+    );
+
     logThisPhase(Phase.GeoCode);
     if (args.options.geoCode) {
-        await classifyImages(imageProperties, Phase.GeoCode, args);
+        await processImagesForPhase(imageProperties, Phase.GeoCode, args, mapDateToLocationManager);
     } else {
         console.log("geo locate: skipping - geo locate option is not enabled");
     }
 
+    mapDateToLocationManager.dumpAutoMapToDisk(args.imageInputDir);
+
     logThisPhase(Phase.Classify);
-    await classifyImages(imageProperties, Phase.Classify, args);
+    await processImagesForPhase(imageProperties, Phase.Classify, args, mapDateToLocationManager);
 }
 
 function logThisPhase(phase: Phase) {
@@ -120,10 +128,11 @@ function getAllImageProperties(files: string[], args: Args): ImageProperties[] {
         .filter(f => !!f) as ImageProperties[];
 }
 
-async function classifyImages(
+async function processImagesForPhase(
     imageProperties: ImageProperties[],
     phase: Phase,
-    args: Args
+    args: Args,
+    mapDateToLocationManager: MapDateToLocationManager
 ): Promise<undefined> {
     return new Promise<undefined>((resolve, reject) => {
         let i = 0;
@@ -137,12 +146,17 @@ async function classifyImages(
 
                     switch (phase) {
                         case Phase.Classify:
-                            await doClassifyPhaseForImage(thisImageProperties, args);
+                            await doClassifyPhaseForImage(
+                                thisImageProperties,
+                                args,
+                                mapDateToLocationManager
+                            );
                             break;
                         case Phase.GeoCode:
                             const geoProperties = await doGeoCodePhaseForImage(
                                 thisImageProperties,
-                                args.options
+                                args.options,
+                                mapDateToLocationManager.autoMap
                             );
                             thisImageProperties.location = geoProperties.location;
                             break;
@@ -178,21 +192,31 @@ async function classifyImages(
     });
 }
 
-async function doClassifyPhaseForImage(properties: ImageProperties, args: Args) {
+async function doClassifyPhaseForImage(
+    properties: ImageProperties,
+    args: Args,
+    mapDateToLocationManager: MapDateToLocationManager
+) {
     const imageProps = await ImageClassifier.classifyImage(properties, args.options);
 
     ConsoleReporter.report(imageProps);
 
     if (!args.options.dryRun) {
-        await ImageMover.move(imageProps, args.options.filenameFormat, args.imageOutputDir);
+        await ImageMover.move(
+            imageProps,
+            args.options.filenameFormat,
+            args.imageOutputDir,
+            mapDateToLocationManager
+        );
     }
 }
 
 async function doGeoCodePhaseForImage(
     properties: ImageProperties,
-    options: Options
+    options: Options,
+    autoMapDateToLocation: MapDateToLocation
 ): Promise<ImageProperties> {
-    const geoProps = await GeoCoder.processImage(properties, options);
+    const geoProps = await GeoCoder.processImage(properties, options, autoMapDateToLocation);
 
     ConsoleReporter.report(geoProps);
 

@@ -30,6 +30,7 @@ image-classifier-ts is stable, with ongoing development (Linux, Mac, Windows) fo
 -   auto classify the image using the Google Vision API
 -   determine geographic location using the Google Geolocation API
 -   the output filename can include date, dimensions, file size as well as labels given by Google
+-   can take geographic location from mobile photos and apply them to photos without a GPS device (matching by date)
 
 ## usage
 
@@ -58,7 +59,7 @@ Inside your npm project:
 
 `yarn add image-classifier-ts`
 
-`node node_modules/image-classifier-ts/dist/lib/src/main <input directory> <output directory>`
+`node node_modules/image-classifier-ts/dist/lib/main <input directory> <output directory>`
 
 #### from the source code
 

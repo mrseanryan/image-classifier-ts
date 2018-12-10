@@ -5,7 +5,7 @@ import { promisify } from "util";
 import { ImageProperties } from "./model/ImageProperties";
 import { FileFormatToken, FilenameGenerator, FileNameTokens } from "./utils/FilenameGenerator";
 import { FileUtils } from "./utils/FileUtils";
-import { MapDateToLocation } from "./utils/MapDateToLocation";
+import { MapDateToLocationManager } from "./utils/MapDateToLocationManager";
 
 const renamePromise = promisify(fs.rename);
 
@@ -13,7 +13,8 @@ export namespace ImageMover {
     export async function move(
         imageProps: ImageProperties,
         filenameFormat: string,
-        imageOutputDir: string
+        imageOutputDir: string,
+        mapDateToLocationManager: MapDateToLocationManager
     ): Promise<void> {
         const tokens: FileNameTokens = new Map<FileFormatToken, string>();
         {
@@ -25,13 +26,15 @@ export namespace ImageMover {
             tokens.set(FileFormatToken.FileSizeMb, imageProps.fileSizeMbText);
         }
 
-        const location = getLocation(imageProps);
+        const location = getLocation(imageProps, mapDateToLocationManager);
         if (location) {
             tokens.set(FileFormatToken.Location, location);
         } else if (FilenameGenerator.doesFormatIncludeLocation(filenameFormat)) {
             console.warn(
                 `skipping: Filename format includes a location, but the location of this photo is unknown.`
             );
+
+            // TODO xxx return true if moved - then can count total number of images moved
             return Promise.resolve();
         }
 
@@ -47,17 +50,16 @@ export namespace ImageMover {
         return renamePromise(imageProps.imagePath, newPath);
     }
 
-    function getLocation(imageProps: ImageProperties): string | null {
-        const mapDateToLocation = MapDateToLocation.parseFromCsv(
-            path.dirname(imageProps.imagePath)
-        );
-
+    function getLocation(
+        imageProps: ImageProperties,
+        mapDateToLocationManager: MapDateToLocationManager
+    ): string | null {
         // prefer geo-coding if available:
         if (imageProps.location && imageProps.location.completionScore > 0) {
             return imageProps.location.toString();
         }
 
-        const location = mapDateToLocation.getLocationForFile(imageProps.imagePath);
+        const location = mapDateToLocationManager.getLocationForFile(imageProps.imagePath);
         return location;
     }
 }

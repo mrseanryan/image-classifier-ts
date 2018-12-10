@@ -1,10 +1,13 @@
 import * as fs from "fs";
 import * as path from "path";
 
+import { CsvWriter } from "./CsvWriter";
 import { FileUtils } from "./FileUtils";
 import { SimpleDate } from "./SimpleDate";
 
 const DATE_MAP_CSV_FILENAME = "mapDateToLocation.csv";
+
+export const AUTO_DATE_MAP_CSV_FILENAME = "mapDateToLocation.auto.csv";
 
 export class MapDateToLocation {
     static parseFromCsv(pathToDirectory: string): MapDateToLocation {
@@ -63,6 +66,20 @@ export class MapDateToLocation {
 
     private static isComment(line: string): boolean {
         return line.startsWith("#");
+    }
+
+    dumpToDisk(filePath: string) {
+        const writer = new CsvWriter(filePath);
+
+        this.mapDateToLocation.forEach((value, key) => {
+            writer.writeRow([key, value.trim()]);
+        });
+    }
+
+    removeFromDisk(filePath: string) {
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
     }
 
     private mapDateToLocation = new Map<string, string>();
