@@ -1,13 +1,13 @@
 import * as path from "path";
+import { createSourceMapSource } from "typescript";
 
 import { MapDateToLocation } from "../src/utils/MapDateToLocation";
 import { SimpleDate } from "../src/utils/SimpleDate";
-
-const PATH_TO_TEST_DATA = "./static/testData/withLocation";
+import { TestImages } from "../testUtils/TestImages";
 
 describe("MapDateToLocation tests", () => {
     it("should parse locations from a CSV file", () => {
-        const map = MapDateToLocation.parseFromCsv(PATH_TO_TEST_DATA);
+        const map = MapDateToLocation.parseFromCsv(TestImages.PATH_TO_TEST_DATA);
 
         // check some outside dates:
         expect(map.getLocationForDate(new SimpleDate(1, 1, 2018))).toBe(null);
@@ -46,8 +46,8 @@ describe("MapDateToLocation tests", () => {
         expect(map.getLocationForDate(new SimpleDate(3, 4, year))).toBe(null);
     });
 
-    it("should parse locations from a CSV file and apply it to a file", () => {
-        const map = MapDateToLocation.parseFromCsv(PATH_TO_TEST_DATA);
+    it("should parse locations from a manual CSV file and apply it to a file", () => {
+        const map = MapDateToLocation.parseFromCsv(TestImages.PATH_TO_TEST_DATA);
 
         const modifiedDate = new SimpleDate(7, 15, 2018);
 
@@ -55,8 +55,10 @@ describe("MapDateToLocation tests", () => {
 
         expect(map.getLocationForDate(modifiedDate)).toBe(expectedLocation);
 
-        const imageFilename = "2018-07-15 16.57.48.jpg";
-        const actualLocation = map.getLocationForFile(path.join(PATH_TO_TEST_DATA, imageFilename));
+        const imageFilename = TestImages.imageWithExifAndGeoLocation;
+        const actualLocation = map.getLocationForFile(
+            path.join(TestImages.PATH_TO_TEST_DATA, imageFilename)
+        );
 
         expect(actualLocation).toBe(expectedLocation);
     });

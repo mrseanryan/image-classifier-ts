@@ -95,4 +95,8 @@ export class MapDateToLocation {
 
         return location;
     }
+
+    setLocationForDate(date: SimpleDate, location: string) {
+        this.mapDateToLocation.set(date.toString(), location);
+    }
 }

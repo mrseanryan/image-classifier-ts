@@ -2,12 +2,14 @@ import * as path from "path";
 
 import { FileFormatToken, FilenameGenerator, FileNameTokens } from "../src/utils/FilenameGenerator";
 import { FileUtils } from "../src/utils/FileUtils";
+import { TestImages } from "../testUtils/TestImages";
 
 describe("FilenameGenerator tests", () => {
     it("it should handle a complex format", () => {
         let filenameFormat = "{year}/{location}/{topLabel}/{combinedLabels}--{filename}";
 
-        const imagePath = "./static/testData/withLocation/2018-07-15 16.57.48.jpg";
+        const imagePath =
+            "./static/testData/withLocation/" + TestImages.imageWithExifAndGeoLocation;
 
         const topDesc = "bird";
         const combinedDesc = "bird_feather_seagull";
