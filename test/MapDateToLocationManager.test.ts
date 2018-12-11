@@ -29,7 +29,7 @@ describe("MapDateToLocationManager tests", () => {
 
         // Test match to manual CSV file
         {
-            const expectedManualLocation = "Rotterdam";
+            const expectedManualLocation = "Rotterdam-July";
 
             const actualLocationForDate = manualMap.getLocationForDate(modifiedDateInManualMap);
             if (

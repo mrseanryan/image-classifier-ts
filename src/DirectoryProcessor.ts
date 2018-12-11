@@ -103,7 +103,7 @@ async function processImageDirectory(args: Args): Promise<ResultsByPhase> {
     const imageProperties = getAllImageProperties(files, args);
 
     const mapDateToLocationManager = MapDateToLocationManager.fromImageDirectory(
-        path.dirname(args.imageInputDir),
+        args.imageInputDir,
         args.options
     );
 
