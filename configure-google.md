@@ -45,6 +45,6 @@ Rename the file to something like `image-classifier-ts-credentials.json`
 
 -   set environment variable for your OS user:
     GOOGLE_APPLICATION_CREDENTIALS=<path to the JSON file>
-    IMAGE_CLASSIFIER_TS_API_KEY=<your Google Cloud key that has Geolocation + Vision APIs enabled>
+    IMAGE_CLASSIFIER_TS_API_KEY=<your Google Cloud key that has Geocoding + Vision APIs enabled>
 
 -   restart any command prompts

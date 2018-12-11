@@ -12,7 +12,7 @@ if (!args) {
  *
  * - first identify all images that have a lat/long
  *  - for each such file:
- *    - send lat/long to geolocation service -> locationDescription
+ *    - send lat/long to geocoding service -> locationDescription
  * - *create* mapDateToLocation.auto.csv file
  *
  * - THEN run the image classifcation
