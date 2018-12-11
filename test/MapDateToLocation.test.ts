@@ -16,14 +16,14 @@ describe("MapDateToLocation tests", () => {
         expect(map.getLocationForDate(new SimpleDate(1, 1, 2018))).toBe(null);
         expect(map.getLocationForDate(new SimpleDate(7, 10, 2020))).toBe(null);
 
-        // check the date range:
-        const month = 7;
-        const year = 2018;
-
-        const checkDate = (_month: number, _day: number, _year: number) => {
+        const checkDate = (
+            _month: number,
+            _day: number,
+            _year: number,
+            expectedLocation: string
+        ) => {
             const date = new SimpleDate(_month, _day, _year);
             const actualLocation = map.getLocationForDate(date);
-            const expectedLocation = "Rotterdam";
             if (!actualLocation || actualLocation.toString() !== expectedLocation) {
                 fail(
                     `expected ${actualLocation} to be ${expectedLocation} for simple date ${date}`
@@ -31,9 +31,13 @@ describe("MapDateToLocation tests", () => {
             }
         };
 
+        // check the date range:
+        const month = 7;
+        const year = 2018;
+
         expect(map.getLocationForDate(new SimpleDate(month, 9, year))).toBe(null);
         for (let day = 10; day <= 20; day++) {
-            checkDate(month, day, year);
+            checkDate(month, day, year, "Rotterdam-July");
         }
         expect(map.getLocationForDate(new SimpleDate(month, 21, year))).toBe(null);
 
@@ -41,10 +45,10 @@ describe("MapDateToLocation tests", () => {
         // check at the end of a month:
         // 28 days in Feb in 2018
         for (let day = 27; day <= 28; day++) {
-            checkDate(2, day, year);
+            checkDate(2, day, year, "Rotterdam-Feb-or-Mar");
         }
         for (let day = 1; day <= 3; day++) {
-            checkDate(3, day, year);
+            checkDate(3, day, year, "Rotterdam-Feb-or-Mar");
         }
         expect(map.getLocationForDate(new SimpleDate(3, 4, year))).toBe(null);
     });
@@ -57,7 +61,7 @@ describe("MapDateToLocation tests", () => {
 
         const modifiedDate = new SimpleDate(7, 15, 2018);
 
-        const expectedLocation = "Rotterdam";
+        const expectedLocation = "Rotterdam-July";
 
         const actualDerivedLocation = map.getLocationForDate(modifiedDate);
         if (!actualDerivedLocation || actualDerivedLocation.toString() !== expectedLocation) {

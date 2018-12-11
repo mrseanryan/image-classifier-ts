@@ -95,6 +95,9 @@ export namespace ArgsParser {
                         "minScore must have a value, like: minScore=0.8"
                     );
                     break;
+                case "-replaceOnMove":
+                    args.options.replaceOnMove = true;
+                    break;
                 case "-topNLabels":
                     args.options.topNLabels = assertHasNumericValue(
                         "topNLabels must have a value, like: topNLabels=2"

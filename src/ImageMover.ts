@@ -3,6 +3,7 @@ import * as path from "path";
 import { promisify } from "util";
 
 import { ImageProperties } from "./model/ImageProperties";
+import { Options } from "./utils/args/Args";
 import { FileFormatToken, FilenameGenerator, FileNameTokens } from "./utils/FilenameGenerator";
 import { FileUtils } from "./utils/FileUtils";
 import { MapDateToLocationManager } from "./utils/MapDateToLocationManager";
@@ -12,7 +13,7 @@ const renamePromise = promisify(fs.rename);
 export namespace ImageMover {
     export async function move(
         imageProps: ImageProperties,
-        filenameFormat: string,
+        options: Options,
         imageOutputDir: string,
         mapDateToLocationManager: MapDateToLocationManager
     ): Promise<boolean> {
@@ -29,7 +30,7 @@ export namespace ImageMover {
         const location = getLocation(imageProps, mapDateToLocationManager);
         if (location) {
             tokens.set(FileFormatToken.Location, location);
-        } else if (FilenameGenerator.doesFormatIncludeLocation(filenameFormat)) {
+        } else if (FilenameGenerator.doesFormatIncludeLocation(options.filenameFormat)) {
             console.warn(
                 `skipping: Filename format includes a location, but the location of this photo is unknown.`
             );
@@ -37,12 +38,17 @@ export namespace ImageMover {
             return false;
         }
 
-        const newFilename = FilenameGenerator.generateFilename(tokens, filenameFormat);
+        const newFilename = FilenameGenerator.generateFilename(tokens, options.filenameFormat);
 
         const subDir = path.dirname(newFilename);
         FileUtils.ensureSubDirsExist(imageOutputDir, subDir);
 
         const newPath = path.join(imageOutputDir, newFilename);
+
+        if (!options.replaceOnMove && fs.existsSync(newPath)) {
+            console.warn(`skipping: file already exists at ${newPath}`);
+            return false;
+        }
 
         console.log("moving image ", imageProps.imagePath, " => ", newPath);
 

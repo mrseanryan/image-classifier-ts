@@ -13,5 +13,6 @@ export type Options = {
     locationFormat: string;
     derivedLocationFormat: string;
     minScore: number;
+    replaceOnMove: boolean;
     topNLabels: number;
 };

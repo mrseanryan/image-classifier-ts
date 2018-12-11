@@ -103,7 +103,7 @@ async function processImageDirectory(args: Args): Promise<ResultsByPhase> {
     const imageProperties = getAllImageProperties(files, args);
 
     const mapDateToLocationManager = MapDateToLocationManager.fromImageDirectory(
-        path.dirname(args.imageInputDir),
+        args.imageInputDir,
         args.options
     );
 
@@ -248,7 +248,7 @@ async function doClassifyPhaseForImage(
     if (!args.options.dryRun) {
         return await ImageMover.move(
             imageProps,
-            args.options.filenameFormat,
+            args.options,
             args.imageOutputDir,
             mapDateToLocationManager
         );

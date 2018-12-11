@@ -18,6 +18,7 @@ export namespace UsageText {
                 `  -locationFormat=<format>${NEXT_COLUMN}(The format of the 'location' part of the filename)`,
                 `    example: -locationFormat={country}_{area1}_{area2}_{area3}`,
                 `  -minScore=<number 0-1>${NEXT_COLUMN}(Include only Google labels that have a score at least this high (0-1))`,
+                `  -replaceOnMove${NEXT_COLUMN}(Allow files to be overwritten when moving an image)`,
                 `  -topNLabels=<number>${NEXT_COLUMN}(Include the top N labels from Google.)`
             ].join(NEW_LINE)
         );
