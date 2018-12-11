@@ -194,7 +194,11 @@ async function processImagesForPhase(
                                 args.options,
                                 mapDateToLocationManager.autoMap
                             );
-                            thisImageProperties.location = geoProperties.location;
+                            if (geoProperties.location) {
+                                Object.assign(thisImageProperties, {
+                                    location: geoProperties.location
+                                });
+                            }
 
                             if (geoProperties.location) {
                                 result.imagesProcessedOk++;

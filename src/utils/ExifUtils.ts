@@ -123,11 +123,7 @@ export namespace ExifUtils {
         try {
             const tags = exifReader.load(buffer.buffer);
 
-            // The MakerNote tag can be really large. Remove it to lower memory
-            // usage if you're parsing a lot of files and saving the tags.
-            // tslint:disable-next-line:no-dynamic-delete
-            delete tags["MakerNote"];
-            // TODO xxx could also delete any props that start with 'undefined-
+            deleteUnusedTags(tags);
 
             return ExifTagSet.fromTags(tags);
         } catch (error) {
@@ -139,6 +135,21 @@ export namespace ExifUtils {
 
             throw error;
         }
+    }
+
+    const DELETED = {};
+
+    function deleteUnusedTags(tags: any) {
+        // The MakerNote tag can be really large. Remove it to lower memory
+        // usage if you're parsing a lot of files and saving the tags.
+        tags["MakerNote"] = DELETED;
+
+        // also delete any props that start with 'undefined-
+        Object.keys(tags)
+            .filter(t => t.startsWith("undefined"))
+            .forEach(t => {
+                tags[t] = DELETED;
+            });
     }
 
     function hasFileExif(filepath: string): boolean {

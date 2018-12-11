@@ -42,8 +42,7 @@ export class ImageProperties {
         readonly topLabels: string[] = [],
         readonly exif: ExifTagSet = new ExifTagSet(),
         readonly fileSizeMb: number | null = null,
-        // TODO xxx try to avoid modifying
-        public location: ImageLocation | null = null
+        readonly location: ImageLocation | null = null
     ) {}
 
     get fileSizeMbText(): string {
