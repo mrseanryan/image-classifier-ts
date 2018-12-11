@@ -1,4 +1,5 @@
-import { ImageLocation, ImageProperties } from "../model/ImageProperties";
+import { ImageLocation } from "../model/ImageLocation";
+import { ImageProperties } from "../model/ImageProperties";
 import { Options } from "../utils/args/Args";
 
 export namespace GeoCodeResponseParser {

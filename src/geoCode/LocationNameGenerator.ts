@@ -1,7 +1,4 @@
-import { parse } from "marked";
-
 import { NameGeneratorUtil } from "../utils/NameGeneratorUtil";
-import { StringUtils } from "../utils/StringUtils";
 
 export enum LocationFormatToken {
     Country = "country",

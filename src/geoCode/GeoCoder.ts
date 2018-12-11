@@ -30,7 +30,7 @@ export namespace GeoCoder {
             // TODO - could store multiple locations per date, and match to nearest hour
             autoMapDateToLocation.setLocationForDate(
                 newProperties.modificationDate,
-                newProperties.location.toString()
+                newProperties.location
             );
         }
 

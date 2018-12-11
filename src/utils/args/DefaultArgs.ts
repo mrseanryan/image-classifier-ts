@@ -13,6 +13,7 @@ export namespace DefaultArgs {
 
     function getDefaultOptions(): Options {
         return {
+            derivedLocationFormat: "{country}_{area1}",
             dryRun: false,
             filenameFormat: "{year}/{topLabel}/{combinedLabels}--{filename}",
             geoCode: false,

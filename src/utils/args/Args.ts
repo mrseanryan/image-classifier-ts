@@ -1,3 +1,5 @@
+import { triggerAsyncId } from "async_hooks";
+
 export type Args = {
     imageInputDir: string;
     imageOutputDir: string;
@@ -9,6 +11,7 @@ export type Options = {
     filenameFormat: string;
     geoCode: boolean;
     locationFormat: string;
+    derivedLocationFormat: string;
     minScore: number;
     topNLabels: number;
 };

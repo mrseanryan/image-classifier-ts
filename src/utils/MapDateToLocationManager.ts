@@ -1,17 +1,24 @@
 import * as path from "path";
 
+import { ImageLocation } from "../model/ImageLocation";
+import { Options } from "./args/Args";
 import { AUTO_DATE_MAP_CSV_FILENAME, MapDateToLocation } from "./MapDateToLocation";
 import { SimpleDate } from "./SimpleDate";
 
 export class MapDateToLocationManager {
-    static fromImageDirectory(imageDir: string) {
+    static fromImageDirectory(imageDir: string, options: Options) {
         return new MapDateToLocationManager(
-            MapDateToLocation.parseFromCsv(imageDir),
-            new MapDateToLocation()
+            MapDateToLocation.parseFromCsv(imageDir, options),
+            new MapDateToLocation(),
+            options
         );
     }
 
-    constructor(readonly manualMap: MapDateToLocation, readonly autoMap: MapDateToLocation) {}
+    constructor(
+        readonly manualMap: MapDateToLocation,
+        readonly autoMap: MapDateToLocation,
+        readonly options: Options
+    ) {}
 
     /**
      * Dump the auto generated map from date to location (via exit lat/longs) to disk.
@@ -23,14 +30,21 @@ export class MapDateToLocationManager {
         this.autoMap.dumpToDisk(filePath);
     }
 
-    getLocationForDate(date: SimpleDate): string | null {
-        // manual file takes priority (to let user adjust)
-        return this.manualMap.getLocationForDate(date) || this.autoMap.getLocationForDate(date);
-    }
     getLocationForFile(filepath: string): string | null {
         // manual file takes priority (to let user adjust)
-        return (
-            this.manualMap.getLocationForFile(filepath) || this.autoMap.getLocationForFile(filepath)
-        );
+        const manualLocation = this.manualMap.getLocationForFile(filepath);
+        if (manualLocation) {
+            return manualLocation.toString();
+        }
+
+        const autoLocation = this.autoMap.getLocationForFile(filepath);
+
+        if (autoLocation) {
+            // Use a separate (usually less specific) format for derived location,
+            // since it is less accurate:
+            return autoLocation.toString(this.options.derivedLocationFormat);
+        }
+
+        return null;
     }
 }

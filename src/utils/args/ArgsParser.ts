@@ -66,6 +66,11 @@ export namespace ArgsParser {
             };
 
             switch (option) {
+                case "-derivedLocationFormat":
+                    args.options.derivedLocationFormat = assertHasValue(
+                        "derivedLocationFormat must have a value, like derivedLocationFormat={country}_{area1}_{area2}_{area3}"
+                    );
+                    break;
                 case "-dryRun":
                     args.options.dryRun = true;
                     break;

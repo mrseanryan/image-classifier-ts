@@ -1,62 +1,9 @@
-import { pathExists } from "fs-extra";
 import * as path from "path";
-import { stringify } from "querystring";
 
-import { LocationFormatToken, LocationNameGenerator } from "../geoCode/LocationNameGenerator";
 import { ExifTagSet } from "../utils/ExifUtils";
 import { FileUtils } from "../utils/FileUtils";
 import { SimpleDate } from "../utils/SimpleDate";
-import { StringUtils } from "../utils/StringUtils";
-
-// immutable object!
-export class ImageLocation {
-    constructor(
-        readonly country: string,
-        readonly addressLevel1: string,
-        readonly addressLevel2: string,
-        readonly subLocality: string,
-        private readonly locationFormat: string
-    ) {}
-
-    get completionScore(): number {
-        return [
-            {
-                value: this.country,
-                score: 10
-            },
-            {
-                value: this.addressLevel1,
-                score: 5
-            },
-            {
-                value: this.addressLevel2,
-                score: 3
-            },
-            {
-                value: this.subLocality,
-                score: 1
-            }
-        ]
-            .map(entry => {
-                return entry.value.length > 0 ? entry.score : 0;
-            })
-            .reduce((previous, current) => previous + current, 0);
-    }
-
-    toString(): string {
-        const tokens = new Map<LocationFormatToken, string>();
-        tokens.set(LocationFormatToken.Country, this.cleanValue(this.country));
-        tokens.set(LocationFormatToken.Area1, this.cleanValue(this.addressLevel1));
-        tokens.set(LocationFormatToken.Area2, this.cleanValue(this.addressLevel2));
-        tokens.set(LocationFormatToken.Area3, this.cleanValue(this.subLocality));
-
-        return LocationNameGenerator.generate(tokens, this.locationFormat);
-    }
-
-    private cleanValue(value: string): string {
-        return StringUtils.replaceAll(value.trim(), " ", "_");
-    }
-}
+import { ImageLocation } from "./ImageLocation";
 
 // immutable object!
 export class ImageProperties {

@@ -1,13 +1,16 @@
 import * as path from "path";
-import { createSourceMapSource } from "typescript";
 
+import { DefaultArgs } from "../src/utils/args/DefaultArgs";
 import { MapDateToLocation } from "../src/utils/MapDateToLocation";
 import { SimpleDate } from "../src/utils/SimpleDate";
 import { TestImages } from "../testUtils/TestImages";
 
 describe("MapDateToLocation tests", () => {
     it("should parse locations from a CSV file", () => {
-        const map = MapDateToLocation.parseFromCsv(TestImages.PATH_TO_TEST_DATA);
+        const map = MapDateToLocation.parseFromCsv(
+            TestImages.PATH_TO_TEST_DATA,
+            DefaultArgs.getDefault().options
+        );
 
         // check some outside dates:
         expect(map.getLocationForDate(new SimpleDate(1, 1, 2018))).toBe(null);
@@ -21,7 +24,7 @@ describe("MapDateToLocation tests", () => {
             const date = new SimpleDate(_month, _day, _year);
             const actualLocation = map.getLocationForDate(date);
             const expectedLocation = "Rotterdam";
-            if (actualLocation !== expectedLocation) {
+            if (!actualLocation || actualLocation.toString() !== expectedLocation) {
                 fail(
                     `expected ${actualLocation} to be ${expectedLocation} for simple date ${date}`
                 );
@@ -47,19 +50,27 @@ describe("MapDateToLocation tests", () => {
     });
 
     it("should parse locations from a manual CSV file and apply it to a file", () => {
-        const map = MapDateToLocation.parseFromCsv(TestImages.PATH_TO_TEST_DATA);
+        const map = MapDateToLocation.parseFromCsv(
+            TestImages.PATH_TO_TEST_DATA,
+            DefaultArgs.getDefault().options
+        );
 
         const modifiedDate = new SimpleDate(7, 15, 2018);
 
         const expectedLocation = "Rotterdam";
 
-        expect(map.getLocationForDate(modifiedDate)).toBe(expectedLocation);
+        const actualDerivedLocation = map.getLocationForDate(modifiedDate);
+        if (!actualDerivedLocation || actualDerivedLocation.toString() !== expectedLocation) {
+            fail(`actualDerivedLocation '${actualDerivedLocation}' should be ${expectedLocation}`);
+        }
 
         const imageFilename = TestImages.imageWithExifAndGeoLocation;
         const actualLocation = map.getLocationForFile(
             path.join(TestImages.PATH_TO_TEST_DATA, imageFilename)
         );
 
-        expect(actualLocation).toBe(expectedLocation);
+        if (!actualLocation || actualLocation.toString() !== expectedLocation) {
+            fail(`actualLocation '${actualLocation}' should be ${expectedLocation}`);
+        }
     });
 });
