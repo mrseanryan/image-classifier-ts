@@ -248,7 +248,7 @@ async function doClassifyPhaseForImage(
     if (!args.options.dryRun) {
         return await ImageMover.move(
             imageProps,
-            args.options.filenameFormat,
+            args.options,
             args.imageOutputDir,
             mapDateToLocationManager
         );

@@ -19,6 +19,7 @@ export namespace DefaultArgs {
             geoCode: false,
             locationFormat: "{country}_{area1}_{area2}_{area3}",
             minScore: 0.7,
+            replaceOnMove: false,
             topNLabels: 3
         };
     }
