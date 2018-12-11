@@ -1,9 +1,9 @@
-import { pathExists } from "fs-extra";
 import * as path from "path";
 
 import { ExifTagSet } from "../utils/ExifUtils";
 import { FileUtils } from "../utils/FileUtils";
 import { SimpleDate } from "../utils/SimpleDate";
+import { ImageLocation } from "./ImageLocation";
 
 // immutable object!
 export class ImageProperties {
@@ -12,7 +12,18 @@ export class ImageProperties {
             properties.imagePath,
             properties.topLabels,
             properties.exif,
-            fileSizeMb
+            fileSizeMb,
+            properties.location
+        );
+    }
+
+    static withLocation(properties: ImageProperties, location: ImageLocation): ImageProperties {
+        return new ImageProperties(
+            properties.imagePath,
+            properties.topLabels,
+            properties.exif,
+            properties.fileSizeMb,
+            location
         );
     }
 
@@ -21,7 +32,8 @@ export class ImageProperties {
             properties.imagePath,
             topLabels,
             properties.exif,
-            properties.fileSizeMb
+            properties.fileSizeMb,
+            properties.location
         );
     }
 
@@ -29,7 +41,8 @@ export class ImageProperties {
         readonly imagePath: string,
         readonly topLabels: string[] = [],
         readonly exif: ExifTagSet = new ExifTagSet(),
-        readonly fileSizeMb: number | null = null
+        readonly fileSizeMb: number | null = null,
+        readonly location: ImageLocation | null = null
     ) {}
 
     get fileSizeMbText(): string {

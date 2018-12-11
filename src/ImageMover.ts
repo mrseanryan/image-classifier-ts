@@ -5,7 +5,7 @@ import { promisify } from "util";
 import { ImageProperties } from "./model/ImageProperties";
 import { FileFormatToken, FilenameGenerator, FileNameTokens } from "./utils/FilenameGenerator";
 import { FileUtils } from "./utils/FileUtils";
-import { MapDateToLocation } from "./utils/MapDateToLocation";
+import { MapDateToLocationManager } from "./utils/MapDateToLocationManager";
 
 const renamePromise = promisify(fs.rename);
 
@@ -13,8 +13,9 @@ export namespace ImageMover {
     export async function move(
         imageProps: ImageProperties,
         filenameFormat: string,
-        imageOutputDir: string
-    ): Promise<void> {
+        imageOutputDir: string,
+        mapDateToLocationManager: MapDateToLocationManager
+    ): Promise<boolean> {
         const tokens: FileNameTokens = new Map<FileFormatToken, string>();
         {
             const filename = path.basename(imageProps.imagePath);
@@ -25,18 +26,15 @@ export namespace ImageMover {
             tokens.set(FileFormatToken.FileSizeMb, imageProps.fileSizeMbText);
         }
 
-        const mapDateToLocation = MapDateToLocation.parseFromCsv(
-            path.dirname(imageProps.imagePath)
-        );
-
-        const location = mapDateToLocation.getLocationForFile(imageProps.imagePath);
+        const location = getLocation(imageProps, mapDateToLocationManager);
         if (location) {
             tokens.set(FileFormatToken.Location, location);
         } else if (FilenameGenerator.doesFormatIncludeLocation(filenameFormat)) {
             console.warn(
                 `skipping: Filename format includes a location, but the location of this photo is unknown.`
             );
-            return Promise.resolve();
+
+            return false;
         }
 
         const newFilename = FilenameGenerator.generateFilename(tokens, filenameFormat);
@@ -48,6 +46,21 @@ export namespace ImageMover {
 
         console.log("moving image ", imageProps.imagePath, " => ", newPath);
 
-        return renamePromise(imageProps.imagePath, newPath);
+        await renamePromise(imageProps.imagePath, newPath);
+
+        return true;
+    }
+
+    function getLocation(
+        imageProps: ImageProperties,
+        mapDateToLocationManager: MapDateToLocationManager
+    ): string | null {
+        // prefer geo-coding if available:
+        if (imageProps.location && imageProps.location.completionScore > 0) {
+            return imageProps.location.toString();
+        }
+
+        const location = mapDateToLocationManager.getLocationForFile(imageProps.imagePath);
+        return location;
     }
 }

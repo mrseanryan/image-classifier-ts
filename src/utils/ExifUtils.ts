@@ -10,11 +10,20 @@ const exifReader = require("exifreader");
 
 // Interesting subset of exif tags
 export enum ExifTag {
+    ApertureValue = "ApertureValue", // 1.53
+    ColorSpace = "ColorSpace", // sRGB
+    DateTime = "DateTime", // 2018:07:15 16:57:48
+    FocalLength = "FocalLength", // 4.2
+    GPSAltitude = "GPSAltitude", // 51 m
+    GPSAltitudeRef = "GPSAltitudeRef", // Sea level
     GPSDateStamp = "GPSDateStamp", // 2018:07:15
-    GPSLatitudeRef = "GPSLatitudeRef", // North latitude
     GPSLatitude = "GPSLatitude", // 51.92166666666667
+    GPSLatitudeRef = "GPSLatitudeRef", // North latitude
+    GPSLongitude = "GPSLongitude", // 4.502777777777778
     GPSLongitudeRef = "GPSLongitudeRef", // East longitude
-    GPSLongitude = "GPSLongitude" // 4.502777777777778
+    ISOSpeedRatings = "ISOSpeedRatings", // 40
+    Orientation = "Orientation", // right-top
+    ShutterSpeedValue = "ShutterSpeedValue" // 7.05
 }
 
 const KNOWN_LATITUDE_FORMAT = "North latitude";
@@ -63,26 +72,30 @@ export class ExifTagSet {
     }
 
     getDateStamp(): SimpleDate | null {
-        if (this.map.has(ExifTag.GPSDateStamp)) {
-            const value = this.get(ExifTag.GPSDateStamp);
-            if (!value) {
-                return null;
-            }
+        const dateValueYMD = this.tryGet(ExifTag.GPSDateStamp) || this.tryGet(ExifTag.DateTime);
 
-            // Y:M:D
-            const parts = value.split(":");
-
-            const parsePart = (index: number): number => {
-                return parseInt(parts[index], 10);
-            };
-
-            const year = parsePart(0);
-            const month = parsePart(1);
-            const day = parsePart(2);
-
-            return new SimpleDate(month, day, year);
+        if (!dateValueYMD) {
+            return null;
         }
 
+        // Y:M:D
+        const parts = dateValueYMD.split(":");
+
+        const parsePart = (index: number): number => {
+            return parseInt(parts[index], 10);
+        };
+
+        const year = parsePart(0);
+        const month = parsePart(1);
+        const day = parsePart(2);
+
+        return new SimpleDate(month, day, year);
+    }
+
+    private tryGet(tag: ExifTag): string | null {
+        if (this.map.has(tag)) {
+            return this.get(tag);
+        }
         return null;
     }
 
@@ -110,10 +123,7 @@ export namespace ExifUtils {
         try {
             const tags = exifReader.load(buffer.buffer);
 
-            // The MakerNote tag can be really large. Remove it to lower memory
-            // usage if you're parsing a lot of files and saving the tags.
-            // tslint:disable-next-line:no-dynamic-delete
-            delete tags["MakerNote"];
+            deleteUnusedTags(tags);
 
             return ExifTagSet.fromTags(tags);
         } catch (error) {
@@ -125,6 +135,21 @@ export namespace ExifUtils {
 
             throw error;
         }
+    }
+
+    const DELETED = {};
+
+    function deleteUnusedTags(tags: any) {
+        // The MakerNote tag can be really large. Remove it to lower memory
+        // usage if you're parsing a lot of files and saving the tags.
+        tags["MakerNote"] = DELETED;
+
+        // also delete any props that start with 'undefined-
+        Object.keys(tags)
+            .filter(t => t.startsWith("undefined"))
+            .forEach(t => {
+                tags[t] = DELETED;
+            });
     }
 
     function hasFileExif(filepath: string): boolean {

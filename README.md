@@ -1,6 +1,6 @@
 # :camera: image-classifier-ts readme
 
-Command line tool to auto-classify images, renaming them with appropriate labels. Uses Node and Google Vision API.
+Command line tool to auto-classify images, renaming them with appropriate labels. Uses Node.js and the Google Geolocation and Vision APIs.
 
 ## status - stable
 
@@ -27,8 +27,10 @@ image-classifier-ts is stable, with ongoing development (Linux, Mac, Windows) fo
 ## features
 
 -   process multiple image files and move them to a configurable folder, filename path
--   auto classify the image using Google Vision API
+-   auto classify the image using the Google Vision API
+-   determine geographic location using the Google Geolocation API
 -   the output filename can include date, dimensions, file size as well as labels given by Google
+-   can take geographic location from mobile photos and apply them to photos without a GPS device (matching by date)
 
 ## usage
 
@@ -45,7 +47,7 @@ yarn
 
 ### 2 Configure your Google API key
 
-see [configure Google API](configure-google.md).
+see [configure Google APIs](configure-google.md).
 
 ### 3 Classify your images
 
@@ -57,7 +59,7 @@ Inside your npm project:
 
 `yarn add image-classifier-ts`
 
-`node node_modules/image-classifier-ts/dist/lib/main.js <input directory> <output directory>`
+`node node_modules/image-classifier-ts/dist/lib/main <input directory> <output directory>`
 
 #### from the source code
 

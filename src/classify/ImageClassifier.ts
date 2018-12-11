@@ -5,21 +5,16 @@ import * as os from "os";
 import * as path from "path";
 import * as sharp from "sharp";
 
+import { ImageProperties } from "../model/ImageProperties";
+import { Options } from "../utils/args/Args";
+import { StringUtils } from "../utils/StringUtils";
 import { GoogleVision } from "./GoogleVision";
-import { ImageProperties } from "./model/ImageProperties";
-import { Options } from "./utils/args/Args";
-import { ArrayUtils } from "./utils/ArrayUtils";
 
 const vision = require("@google-cloud/vision");
-
-// TODO xxx move out to DefaultArgs
-const MIN_SCORE_ACCEPTED = 0.7;
-const TOP_N_LABELS = 3;
 
 const visionClient = new vision.ImageAnnotatorClient();
 
 export namespace ImageClassifier {
-    // TODO xxx add option type: topN=3, minScore
     export async function classifyImage(
         properties: ImageProperties,
         options: Options
@@ -134,7 +129,7 @@ export namespace ImageClassifier {
                     const topLabels = _.take(
                         labels.filter(l => l.score >= options.minScore && isLabelOk(l.description)),
                         options.topNLabels
-                    ).map(l => ArrayUtils.replaceAll(l.description, " ", "-"));
+                    ).map(l => StringUtils.replaceAll(l.description, " ", "-"));
 
                     if (topLabels.length > 0) {
                         topNLabels = topLabels;

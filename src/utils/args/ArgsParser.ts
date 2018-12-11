@@ -66,6 +66,11 @@ export namespace ArgsParser {
             };
 
             switch (option) {
+                case "-derivedLocationFormat":
+                    args.options.derivedLocationFormat = assertHasValue(
+                        "derivedLocationFormat must have a value, like derivedLocationFormat={country}_{area1}_{area2}_{area3}"
+                    );
+                    break;
                 case "-dryRun":
                     args.options.dryRun = true;
                     break;
@@ -77,8 +82,13 @@ export namespace ArgsParser {
                 case "-h":
                 case "-help":
                     throw new HelpNeededError();
-                case "-locate":
-                    args.options.locate = true;
+                case "-geoCode":
+                    args.options.geoCode = true;
+                    break;
+                case "-locationFormat":
+                    args.options.locationFormat = assertHasValue(
+                        "locationFormat must have a value, like locationFormat={country}_{area1}_{area2}_{area3}"
+                    );
                     break;
                 case "-minScore":
                     args.options.minScore = assertHasNumericValue(

@@ -1,13 +1,18 @@
 import * as fs from "fs";
 import * as path from "path";
 
+import { ImageLocation } from "../model/ImageLocation";
+import { Options } from "./args/Args";
+import { CsvWriter } from "./CsvWriter";
 import { FileUtils } from "./FileUtils";
 import { SimpleDate } from "./SimpleDate";
 
 const DATE_MAP_CSV_FILENAME = "mapDateToLocation.csv";
 
+export const AUTO_DATE_MAP_CSV_FILENAME = "mapDateToLocation.auto.csv";
+
 export class MapDateToLocation {
-    static parseFromCsv(pathToDirectory: string): MapDateToLocation {
+    static parseFromCsv(pathToDirectory: string, options: Options): MapDateToLocation {
         const filepath = path.join(pathToDirectory, DATE_MAP_CSV_FILENAME);
 
         const map = new MapDateToLocation();
@@ -53,7 +58,10 @@ export class MapDateToLocation {
                 const location = columns[column++];
 
                 while (date.isLessThanOrEqual(simpleEndDate)) {
-                    map.addLocationForDate(date, location);
+                    map.addLocationForDate(
+                        date,
+                        ImageLocation.fromGivenLocation(location, options)
+                    );
                     date = date.nextDay();
                 }
             });
@@ -65,21 +73,35 @@ export class MapDateToLocation {
         return line.startsWith("#");
     }
 
-    private mapDateToLocation = new Map<string, string>();
+    dumpToDisk(filePath: string) {
+        const writer = new CsvWriter(filePath);
 
-    private addLocationForDate(date: SimpleDate, location: string) {
+        this.mapDateToLocation.forEach((value, key) => {
+            writer.writeRow([key, value.toString()]);
+        });
+    }
+
+    removeFromDisk(filePath: string) {
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+    }
+
+    private mapDateToLocation = new Map<string, ImageLocation>();
+
+    private addLocationForDate(date: SimpleDate, location: ImageLocation) {
         if (this.mapDateToLocation.has(date.toString())) {
             throw new Error(`Already have an entry for date ${date.toString()}`);
         }
 
-        if (!location || location.length === 0) {
+        if (!location || location.completionScore === 0) {
             throw new Error(`No location set for date ${date.toString()}`);
         }
 
         this.mapDateToLocation.set(date.toString(), location);
     }
 
-    getLocationForDate(date: SimpleDate): string | null {
+    getLocationForDate(date: SimpleDate): ImageLocation | null {
         if (this.mapDateToLocation.has(date.toString())) {
             return this.mapDateToLocation.get(date.toString())!;
         }
@@ -87,12 +109,16 @@ export class MapDateToLocation {
         return null;
     }
 
-    getLocationForFile(filepath: string): string | null {
+    getLocationForFile(filepath: string): ImageLocation | null {
         const modified = FileUtils.getModificationDateOfFile(filepath);
 
         const location = this.getLocationForDate(modified);
         console.log(`  location for file - date ${modified.toString()} = '${location}'`);
 
         return location;
+    }
+
+    setLocationForDate(date: SimpleDate, location: ImageLocation) {
+        this.mapDateToLocation.set(date.toString(), location);
     }
 }

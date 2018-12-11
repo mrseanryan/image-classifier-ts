@@ -8,20 +8,17 @@ if (!args) {
     process.exit(666);
 }
 
-// TODO xxx - get city/region (country) from *phone* image -> mapDateToLocation.csv
-/**
+/** 2-phase process
+ *
  * - first identify all images that have a lat/long
  *  - for each such file:
- *      - send lat/long to geolocation service -> locationDescription
- *      - add/update entry in mapFilenameToLocation.csv
- * - use that file mapFilenameToLocation.csv -> create/update mapDateToLocation.csv file
+ *    - send lat/long to geolocation service -> locationDescription
+ * - *create* mapDateToLocation.auto.csv file
  *
  * - THEN run the image classifcation
  * - when generating new filename:
- *      - first look for entry in mapFilenameToLocation.csv
- *      - else try map image date -> locationDescription from mapDateToLocation.csv file
+ *      - first use imageProps.location THEN mapDateToLocation.csv THEN mapDateToLocation.auto.csv
  */
-
 DirectoryProcessor.processDirectory(args!)
     .then((isOk: boolean) => {
         if (isOk) {
