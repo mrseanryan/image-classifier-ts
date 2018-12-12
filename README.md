@@ -30,7 +30,7 @@ image-classifier-ts is stable, with ongoing development (Linux, Mac, Windows) fo
 -   auto classify the image using the Google Vision API
 -   determine geographic location (address) of an image using the Google Geocoding API
 -   the output filename can include date, dimensions, file size as well as labels and adress provided by Google
--   can take geographic location from mobile photos and apply them to photos taken with a non-GPS device (matching by date)
+-   can take geographic locations from mobile photos and apply them to photos taken with a non-GPS device (matching by date)
 
 ## usage
 
@@ -49,7 +49,7 @@ yarn
 
 see [configure Google APIs](configure-google.md).
 
-### 3 Classify your images
+### 3 Classify (label) your images
 
 *note: the processed images will be moved to the output directory. so you may want to point 'input directory' to a *copy* of your images directory.*
 
