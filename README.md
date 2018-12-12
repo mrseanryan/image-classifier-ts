@@ -1,6 +1,6 @@
 # :camera: image-classifier-ts readme
 
-Command line tool to auto-classify images, renaming them with appropriate labels. Uses Node.js and the Google Geocoding and Vision APIs.
+Command line tool to auto-classify images, renaming them with appropriate address and labels. Uses Node.js and the Google Geocoding and Vision APIs.
 
 ## status - stable
 
@@ -26,11 +26,11 @@ image-classifier-ts is stable, with ongoing development (Linux, Mac, Windows) fo
 
 ## features
 
--   process multiple image files and move them to a configurable folder, filename path
+-   process multiple image files and move them to a configurable folder, using a flexible filename template
 -   auto classify the image using the Google Vision API
 -   determine geographic location (address) of an image using the Google Geocoding API
--   the output filename can include date, dimensions, file size as well as labels given by Google
--   can take geographic location from mobile photos and apply them to photos without a GPS device (matching by date)
+-   the output filename can include date, dimensions, file size as well as labels and adress provided by Google
+-   can take geographic location from mobile photos and apply them to photos taken with a non-GPS device (matching by date)
 
 ## usage
 
