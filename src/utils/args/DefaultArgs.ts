@@ -1,5 +1,6 @@
 import * as os from "os";
 
+import { Verbosity } from "../output/Verbosity";
 import { Args, Options } from "./Args";
 
 export namespace DefaultArgs {
@@ -20,7 +21,8 @@ export namespace DefaultArgs {
             locationFormat: "{country}_{area1}_{area2}_{area3}",
             minScore: 0.7,
             replaceOnMove: false,
-            topNLabels: 3
+            topNLabels: 3,
+            verbosity: Verbosity.Low
         };
     }
 }

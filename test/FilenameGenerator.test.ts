@@ -2,9 +2,12 @@ import * as path from "path";
 
 import { FileFormatToken, FilenameGenerator, FileNameTokens } from "../src/utils/FilenameGenerator";
 import { FileUtils } from "../src/utils/FileUtils";
+import { OutputterFactory } from "../src/utils/output/OutputterFactory";
 import { TestImages } from "../testUtils/TestImages";
 
 describe("FilenameGenerator tests", () => {
+    const outputter = OutputterFactory.createNull();
+
     it("it should handle a complex format", () => {
         let filenameFormat = "{year}/{location}/{topLabel}/{combinedLabels}--{filename}";
 
@@ -23,7 +26,10 @@ describe("FilenameGenerator tests", () => {
             tokens.set(FileFormatToken.Filename, originalFilename);
             tokens.set(FileFormatToken.TopLabel, topDesc);
             tokens.set(FileFormatToken.CombinedLabels, combinedDesc);
-            tokens.set(FileFormatToken.Year, FileUtils.getModificationYearOfFile(imagePath));
+            tokens.set(
+                FileFormatToken.Year,
+                FileUtils.getModificationYearOfFile(imagePath, outputter)
+            );
             tokens.set(FileFormatToken.Location, location);
         }
 

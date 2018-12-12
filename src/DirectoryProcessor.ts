@@ -12,43 +12,45 @@ import { ExifUtils } from "./utils/ExifUtils";
 import { FileUtils } from "./utils/FileUtils";
 import { MapDateToLocation } from "./utils/MapDateToLocation";
 import { MapDateToLocationManager } from "./utils/MapDateToLocationManager";
+import { IOutputter } from "./utils/output/IOutputter";
+import { Verbosity } from "./utils/output/Verbosity";
 
 let hasError = false;
 const DELAY_BETWEEN_API_REQUESTS_IN_MILLIS = 1000 / 20;
 
 export namespace DirectoryProcessor {
-    export async function processDirectory(args: Args): Promise<boolean> {
+    export async function processDirectory(args: Args, outputter: IOutputter): Promise<boolean> {
         try {
-            const results = await processImageDirectory(args);
-            dumpResults(results);
+            const results = await processImageDirectory(args, outputter);
+            dumpResults(results, outputter);
 
-            console.log("[processDirectory] - done");
+            outputter.infoVerbose("[processDirectory] - done");
             return !hasError;
         } catch (error) {
-            console.error("[processDirectory] error", error);
+            outputter.errorVerbose("[processDirectory] error", error);
             return false;
         }
     }
 }
 
-function dumpResults(results: ResultsByPhase) {
+function dumpResults(results: ResultsByPhase, outputter: IOutputter) {
     results.forEach((value, key) => {
-        console.log(Phase[key], value);
+        outputter.info(Phase[key], value);
     });
 }
 
-const handleError = (err: any) => {
+const handleError = (err: any, outputter: IOutputter) => {
     if (err) {
-        console.error(err);
+        outputter.error(err);
         hasError = true;
     }
 };
 
-const finish = (fileCount: number) => {
-    console.log(`\n${fileCount} files were processed`);
+const finish = (fileCount: number, outputter: IOutputter) => {
+    outputter.info(`\n${fileCount} files were processed`);
 
     if (hasError) {
-        console.error("errors occurred!");
+        outputter.error("errors occurred");
         process.exit(777);
     }
 };
@@ -76,7 +78,7 @@ enum Phase {
 
 export type ResultsByPhase = Map<Phase, ProcessResultForPhase>;
 
-async function processImageDirectory(args: Args): Promise<ResultsByPhase> {
+async function processImageDirectory(args: Args, outputter: IOutputter): Promise<ResultsByPhase> {
     const readdirPromise = () => {
         return new Promise<string[]>(function(ok, notOk) {
             fs.readdir(args.imageInputDir, function(err, _files) {
@@ -95,61 +97,74 @@ async function processImageDirectory(args: Args): Promise<ResultsByPhase> {
     try {
         files = await readdirPromise();
     } catch (error) {
-        console.error(error);
+        outputter.error(error);
         return resultsByPhase;
     }
-    console.log(`found ${files.length} files to process`);
+    outputter.info(`found ${files.length} files to process`);
 
-    const imageProperties = getAllImageProperties(files, args);
+    const imageProperties = getAllImageProperties(files, args, outputter);
 
     const mapDateToLocationManager = MapDateToLocationManager.fromImageDirectory(
         args.imageInputDir,
         args.options
     );
 
-    logThisPhase(Phase.GeoCode);
+    logThisPhase(Phase.GeoCode, outputter);
     if (args.options.geoCode) {
         const geoResult = await processImagesForPhase(
             imageProperties,
             Phase.GeoCode,
             args,
-            mapDateToLocationManager
+            mapDateToLocationManager,
+            outputter
         );
         resultsByPhase.set(Phase.GeoCode, geoResult);
     } else {
-        console.log("geo locate: skipping - geo locate option is not enabled");
+        outputter.info("geo locate: skipping - geo locate option is not enabled");
     }
 
     mapDateToLocationManager.dumpAutoMapToDisk(args.imageInputDir);
 
-    logThisPhase(Phase.ClassifyAndMove);
+    logThisPhase(Phase.ClassifyAndMove, outputter);
+
     const classifyResult = await processImagesForPhase(
         imageProperties,
         Phase.ClassifyAndMove,
         args,
-        mapDateToLocationManager
+        mapDateToLocationManager,
+        outputter
     );
     resultsByPhase.set(Phase.ClassifyAndMove, classifyResult);
 
     return resultsByPhase;
 }
 
-function logThisPhase(phase: Phase) {
-    console.log(`\n=== ${Phase[phase]} phase ===`);
+function logThisPhase(phase: Phase, outputter: IOutputter) {
+    outputter.info(`\n=== ${Phase[phase]} phase ===`);
 }
 
-function getAllImageProperties(files: string[], args: Args): ImageProperties[] {
+function getAllImageProperties(
+    files: string[],
+    args: Args,
+    outputter: IOutputter
+): ImageProperties[] {
     return files
         .map(filepath => {
             const imagePath = path.join(args.imageInputDir, filepath);
 
             if (isDirectory(imagePath) || !isFileExtensionOk(imagePath)) {
-                console.warn(`\nskipping file ${imagePath} (is dir or a skipped file extension)`);
+                outputter.warnVerbose(
+                    `\nskipping file ${imagePath} (is dir or a skipped file extension)`
+                );
 
                 return null;
             }
 
-            return new ImageProperties(imagePath, [], ExifUtils.readFile(imagePath) || undefined);
+            return new ImageProperties(
+                imagePath,
+                [],
+                ExifUtils.readFile(imagePath, outputter) || undefined
+            );
         })
         .filter(f => !!f) as ImageProperties[];
 }
@@ -162,7 +177,8 @@ async function processImagesForPhase(
     imageProperties: ImageProperties[],
     phase: Phase,
     args: Args,
-    mapDateToLocationManager: MapDateToLocationManager
+    mapDateToLocationManager: MapDateToLocationManager,
+    outputter: IOutputter
 ): Promise<ProcessResultForPhase> {
     return new Promise<ProcessResultForPhase>((resolve, reject) => {
         let result: ProcessResultForPhase = {
@@ -175,14 +191,16 @@ async function processImagesForPhase(
 
                 let isOk = true;
                 try {
-                    console.log(`\nprocessing image at ${thisImageProperties.imagePath}`);
+                    outputter.infoVerbose("\n");
+                    outputter.info(`processing image at ${thisImageProperties.imagePath}`);
 
                     switch (phase) {
                         case Phase.ClassifyAndMove:
                             const didMove = await doClassifyPhaseForImage(
                                 thisImageProperties,
                                 args,
-                                mapDateToLocationManager
+                                mapDateToLocationManager,
+                                outputter
                             );
                             if (didMove) {
                                 result.imagesProcessedOk++;
@@ -192,7 +210,8 @@ async function processImagesForPhase(
                             const geoProperties = await doGeoCodePhaseForImage(
                                 thisImageProperties,
                                 args.options,
-                                mapDateToLocationManager.autoMap
+                                mapDateToLocationManager.autoMap,
+                                outputter
                             );
                             if (geoProperties.location) {
                                 Object.assign(thisImageProperties, {
@@ -208,13 +227,13 @@ async function processImagesForPhase(
                             throw new Error(`unhandled Phase ${[phase]}`);
                     }
                 } catch (err) {
-                    console.error("DP: error");
-                    handleError(err);
+                    outputter.errorVerbose("DP: error");
+                    handleError(err, outputter);
                     isOk = false;
                 }
 
                 if (!isOk) {
-                    handleError("DP: error occurred");
+                    handleError("DP: error occurred", outputter);
                 }
 
                 i++;
@@ -224,9 +243,8 @@ async function processImagesForPhase(
                         doNextImage();
                     }, getDelayForPhase(phase));
                 } else {
-                    finish(imageProperties.length);
+                    finish(imageProperties.length, outputter);
 
-                    console.log("DP: resolving");
                     resolve(result);
                 }
             }
@@ -239,18 +257,20 @@ async function processImagesForPhase(
 async function doClassifyPhaseForImage(
     properties: ImageProperties,
     args: Args,
-    mapDateToLocationManager: MapDateToLocationManager
+    mapDateToLocationManager: MapDateToLocationManager,
+    outputter: IOutputter
 ): Promise<boolean> {
-    const imageProps = await ImageClassifier.classifyImage(properties, args.options);
+    const imageProps = await ImageClassifier.classifyImage(properties, args.options, outputter);
 
-    ConsoleReporter.report(imageProps);
+    ConsoleReporter.report(imageProps, outputter);
 
     if (!args.options.dryRun) {
         return await ImageMover.move(
             imageProps,
             args.options,
             args.imageOutputDir,
-            mapDateToLocationManager
+            mapDateToLocationManager,
+            outputter
         );
     }
 
@@ -260,11 +280,19 @@ async function doClassifyPhaseForImage(
 async function doGeoCodePhaseForImage(
     properties: ImageProperties,
     options: Options,
-    autoMapDateToLocation: MapDateToLocation
+    autoMapDateToLocation: MapDateToLocation,
+    outputter: IOutputter
 ): Promise<ImageProperties> {
-    const geoProps = await GeoCoder.processImage(properties, options, autoMapDateToLocation);
+    const geoProps = await GeoCoder.processImage(
+        properties,
+        options,
+        autoMapDateToLocation,
+        outputter
+    );
 
-    ConsoleReporter.report(geoProps);
+    if (outputter.verbosity === Verbosity.High) {
+        ConsoleReporter.report(geoProps, outputter);
+    }
 
     return geoProps;
 }

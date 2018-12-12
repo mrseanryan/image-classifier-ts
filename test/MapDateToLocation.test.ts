@@ -2,10 +2,13 @@ import * as path from "path";
 
 import { DefaultArgs } from "../src/utils/args/DefaultArgs";
 import { MapDateToLocation } from "../src/utils/MapDateToLocation";
+import { OutputterFactory } from "../src/utils/output/OutputterFactory";
 import { SimpleDate } from "../src/utils/SimpleDate";
 import { TestImages } from "../testUtils/TestImages";
 
 describe("MapDateToLocation tests", () => {
+    const outputter = OutputterFactory.createNull();
+
     it("should parse locations from a CSV file", () => {
         const map = MapDateToLocation.parseFromCsv(
             TestImages.PATH_TO_TEST_DATA,
@@ -70,7 +73,8 @@ describe("MapDateToLocation tests", () => {
 
         const imageFilename = TestImages.imageWithExifAndGeoLocation;
         const actualLocation = map.getLocationForFile(
-            path.join(TestImages.PATH_TO_TEST_DATA, imageFilename)
+            path.join(TestImages.PATH_TO_TEST_DATA, imageFilename),
+            outputter
         );
 
         if (!actualLocation || actualLocation.toString() !== expectedLocation) {

@@ -5,6 +5,7 @@ import { ImageLocation } from "../model/ImageLocation";
 import { Options } from "./args/Args";
 import { CsvWriter } from "./CsvWriter";
 import { FileUtils } from "./FileUtils";
+import { IOutputter } from "./output/IOutputter";
 import { SimpleDate } from "./SimpleDate";
 
 const DATE_MAP_CSV_FILENAME = "mapDateToLocation.csv";
@@ -109,11 +110,11 @@ export class MapDateToLocation {
         return null;
     }
 
-    getLocationForFile(filepath: string): ImageLocation | null {
-        const modified = FileUtils.getModificationDateOfFile(filepath);
+    getLocationForFile(filepath: string, outputter: IOutputter): ImageLocation | null {
+        const modified = FileUtils.getModificationDateOfFile(filepath, outputter);
 
         const location = this.getLocationForDate(modified);
-        console.log(`  location for file - date ${modified.toString()} = '${location}'`);
+        outputter.infoVerbose(`  location for file - date ${modified.toString()} = '${location}'`);
 
         return location;
     }

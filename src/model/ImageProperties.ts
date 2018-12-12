@@ -2,6 +2,7 @@ import * as path from "path";
 
 import { ExifTagSet } from "../utils/ExifUtils";
 import { FileUtils } from "../utils/FileUtils";
+import { IOutputter } from "../utils/output/IOutputter";
 import { SimpleDate } from "../utils/SimpleDate";
 import { ImageLocation } from "./ImageLocation";
 
@@ -69,8 +70,8 @@ export class ImageProperties {
         return path.basename(this.imagePath);
     }
 
-    get modificationDate(): SimpleDate {
-        return FileUtils.getModificationDateOfFile(this.imagePath);
+    modificationDate(outputter: IOutputter): SimpleDate {
+        return FileUtils.getModificationDateOfFile(this.imagePath, outputter);
     }
 
     get topLabel(): string {

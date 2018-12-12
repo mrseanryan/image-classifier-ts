@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 import { ExifUtils } from "./ExifUtils";
+import { IOutputter } from "./output/IOutputter";
 import { SimpleDate } from "./SimpleDate";
 
 export namespace FileUtils {
@@ -23,9 +24,9 @@ export namespace FileUtils {
         });
     }
 
-    export function getModificationDateOfFile(filepath: string): SimpleDate {
+    export function getModificationDateOfFile(filepath: string, outputter: IOutputter): SimpleDate {
         // use date from exif if available (is less likely to change than the file stamp)
-        const exifTags = ExifUtils.readFile(filepath);
+        const exifTags = ExifUtils.readFile(filepath, outputter);
         if (exifTags) {
             const exifDate = exifTags.getDateStamp();
             if (exifDate) {
@@ -38,7 +39,7 @@ export namespace FileUtils {
         return SimpleDate.fromDate(fileCreatedDate);
     }
 
-    export function getModificationYearOfFile(filePath: string): string {
-        return getModificationDateOfFile(filePath).year.toString();
+    export function getModificationYearOfFile(filePath: string, outputter: IOutputter): string {
+        return getModificationDateOfFile(filePath, outputter).year.toString();
     }
 }

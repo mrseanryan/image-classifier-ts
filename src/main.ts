@@ -2,11 +2,14 @@ import * as _ from "lodash";
 
 import { DirectoryProcessor } from "./DirectoryProcessor";
 import { ArgsParser } from "./utils/args/ArgsParser";
+import { OutputterFactory } from "./utils/output/OutputterFactory";
 
 const args = ArgsParser.getArgs();
 if (!args) {
     process.exit(666);
 }
+
+const outputter = OutputterFactory.create(args!.options.verbosity);
 
 /** 2-phase process
  *
@@ -19,7 +22,7 @@ if (!args) {
  * - when generating new filename:
  *      - first use imageProps.location THEN mapDateToLocation.csv THEN mapDateToLocation.auto.csv
  */
-DirectoryProcessor.processDirectory(args!)
+DirectoryProcessor.processDirectory(args!, outputter)
     .then((isOk: boolean) => {
         if (isOk) {
             console.log("[done]");

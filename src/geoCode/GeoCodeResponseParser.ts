@@ -1,16 +1,18 @@
 import { ImageLocation } from "../model/ImageLocation";
 import { ImageProperties } from "../model/ImageProperties";
 import { Options } from "../utils/args/Args";
+import { IOutputter } from "../utils/output/IOutputter";
 
 export namespace GeoCodeResponseParser {
     // exported so can unit test
     export function parseResponse(
         properties: ImageProperties,
         responseJson: any,
-        options: Options
+        options: Options,
+        outputter: IOutputter
     ): ImageProperties {
         if (!responseJson) {
-            console.warn("no response from geo coding service!");
+            outputter.error("no response from geo coding service");
 
             return properties;
         }

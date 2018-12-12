@@ -1,6 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
 
+import { IOutputter } from "./output/IOutputter";
+import { Verbosity } from "./output/Verbosity";
 import { SimpleDate } from "./SimpleDate";
 
 // To solve warning from exifreader
@@ -32,7 +34,7 @@ const KNOWN_LONGITUDE_FORMAT = "East longitude";
 const DUMP_INDENT = "      ";
 
 export class ExifTagSet {
-    static fromTags(tags: any): ExifTagSet {
+    static fromTags(tags: any, outputter: IOutputter): ExifTagSet {
         const interestingTags = Object.keys(ExifTag);
 
         const tagSet = new ExifTagSet();
@@ -45,22 +47,27 @@ export class ExifTagSet {
             }
         });
 
-        tagSet.dump();
+        if (outputter.verbosity === Verbosity.High) {
+            tagSet.dump(outputter);
+        }
 
         return tagSet;
     }
 
     private readonly map = new Map<ExifTag, string>();
 
-    dump() {
+    dump(outputter: IOutputter) {
         this.map.forEach((value, key) => {
-            this.dumpTag(key, value);
+            this.dumpTag(key, value, outputter);
         });
-        console.log(`${DUMP_INDENT}lat/longs`, this.isLatLongOk() ? "[ok]" : "[unknown format]");
+        outputter.infoMediumVerbose(
+            `${DUMP_INDENT}lat/longs`,
+            this.isLatLongOk() ? "[ok]" : "[unknown format]"
+        );
     }
 
-    private dumpTag(tag: string, value: string) {
-        console.log(`${DUMP_INDENT}${tag} = ${value}`);
+    private dumpTag(tag: string, value: string, outputter: IOutputter) {
+        outputter.infoMediumVerbose(`${DUMP_INDENT}${tag} = ${value}`);
     }
 
     get(tag: ExifTag): string | null {
@@ -113,7 +120,7 @@ export class ExifTagSet {
 }
 
 export namespace ExifUtils {
-    export function readFile(filepath: string): ExifTagSet | null {
+    export function readFile(filepath: string, outputter: IOutputter): ExifTagSet | null {
         if (!hasFileExif(filepath)) {
             return null;
         }
@@ -125,13 +132,13 @@ export namespace ExifUtils {
 
             deleteUnusedTags(tags);
 
-            return ExifTagSet.fromTags(tags);
+            return ExifTagSet.fromTags(tags, outputter);
         } catch (error) {
             if (error.name === "MetadataMissingError") {
                 return null;
             }
 
-            console.error("exif error", filepath, error);
+            outputter.error("exif error", filepath, error);
 
             throw error;
         }

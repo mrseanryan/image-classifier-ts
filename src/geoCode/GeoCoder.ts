@@ -4,13 +4,15 @@ import { ImageProperties } from "../model/ImageProperties";
 import { Options } from "../utils/args/Args";
 import { ExifTag } from "../utils/ExifUtils";
 import { MapDateToLocation } from "../utils/MapDateToLocation";
+import { IOutputter } from "../utils/output/IOutputter";
 import { GeoCodeResponseParser } from "./GeoCodeResponseParser";
 
 export namespace GeoCoder {
     export async function processImage(
         properties: ImageProperties,
         options: Options,
-        autoMapDateToLocation: MapDateToLocation
+        autoMapDateToLocation: MapDateToLocation,
+        outputter: IOutputter
     ): Promise<ImageProperties> {
         if (!properties.exif.isLatLongOk()) {
             return properties;
@@ -24,12 +26,17 @@ export namespace GeoCoder {
         );
         const json = await rsp.json();
 
-        const newProperties = GeoCodeResponseParser.parseResponse(properties, json, options);
+        const newProperties = GeoCodeResponseParser.parseResponse(
+            properties,
+            json,
+            options,
+            outputter
+        );
 
         if (newProperties.location) {
             // TODO - could store multiple locations per date, and match to nearest hour
             autoMapDateToLocation.setLocationForDate(
-                newProperties.modificationDate,
+                newProperties.modificationDate(outputter),
                 newProperties.location
             );
         }

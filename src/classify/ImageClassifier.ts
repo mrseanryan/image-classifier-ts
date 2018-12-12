@@ -7,6 +7,7 @@ import * as sharp from "sharp";
 
 import { ImageProperties } from "../model/ImageProperties";
 import { Options } from "../utils/args/Args";
+import { IOutputter } from "../utils/output/IOutputter";
 import { StringUtils } from "../utils/StringUtils";
 import { GoogleVision } from "./GoogleVision";
 
@@ -17,14 +18,16 @@ const visionClient = new vision.ImageAnnotatorClient();
 export namespace ImageClassifier {
     export async function classifyImage(
         properties: ImageProperties,
-        options: Options
+        options: Options,
+        outputter: IOutputter
     ): Promise<ImageProperties> {
         return new Promise<ImageProperties>((resolve, reject) => {
             _classifyImageWithResize(
                 properties,
                 options,
+                outputter,
                 error => {
-                    console.error(`error with file ${properties.imagePath}`, error);
+                    outputter.error(`error with file ${properties.imagePath}`, error);
                     reject(error);
                 },
                 newProperties => resolve(newProperties)
@@ -35,10 +38,11 @@ export namespace ImageClassifier {
     export function _classifyImageWithResize(
         properties: ImageProperties,
         options: Options,
+        outputter: IOutputter,
         handleError: (error: any) => void,
         done: (newProperties: ImageProperties) => void
     ) {
-        console.log(`detecting labels in image: '${properties.imagePath}'`);
+        outputter.infoVerbose(`detecting labels in image: '${properties.imagePath}'`);
 
         const activeProperties = ImageProperties.withFileSizeMb(
             properties,
@@ -50,23 +54,28 @@ export namespace ImageClassifier {
             return;
         }
         if (activeProperties.fileSizeMb > 0.5) {
-            console.log(
+            outputter.infoVerbose(
                 `    'file is large! - ${activeProperties.fileSizeMb} Mb - will use resized copy...`
             );
 
-            resizeImage(activeProperties.imagePath, handleError, (resizedImagePath, err) => {
-                if (err) {
-                    handleError(err);
-                } else {
-                    if (!resizedImagePath) {
-                        throw new Error("unexpected: newImagePath is not set!");
-                    }
+            resizeImage(
+                activeProperties.imagePath,
+                outputter,
+                handleError,
+                (resizedImagePath, err) => {
+                    if (err) {
+                        handleError(err);
+                    } else {
+                        if (!resizedImagePath) {
+                            throw new Error("unexpected: newImagePath is not set");
+                        }
 
-                    classifySmallImage(activeProperties, options, handleError, done);
+                        classifySmallImage(activeProperties, options, outputter, handleError, done);
+                    }
                 }
-            });
+            );
         } else {
-            classifySmallImage(activeProperties, options, handleError, done);
+            classifySmallImage(activeProperties, options, outputter, handleError, done);
         }
     }
 
@@ -79,6 +88,7 @@ export namespace ImageClassifier {
     // ref: https://github.com/lovell/sharp
     const resizeImage = (
         filePath: string,
+        outputter: IOutputter,
         handleError: (error: any) => void,
         cb: (outPath: string | null, err: any) => void
     ) => {
@@ -87,14 +97,14 @@ export namespace ImageClassifier {
         // read file to avoid issue where sharp does not release the file lock!
         fs.readFile(filePath, (err, data) => {
             if (err) {
-                console.error("Error reading file " + filePath, err);
+                outputter.error("Error reading file " + filePath, err);
                 cb(null, err);
             } else {
                 sharp(data)
                     .resize(800)
                     .toFile(outPath, (sharpError, info) => {
                         if (sharpError) {
-                            console.error("Error resizing file " + filePath, sharpError);
+                            outputter.error("Error resizing file " + filePath, sharpError);
                             handleError(sharpError);
                         }
 
@@ -107,10 +117,11 @@ export namespace ImageClassifier {
     const _classifyImage = (
         imagePath: string,
         options: Options,
+        outputter: IOutputter,
         handleError: (error: any) => void,
         cb: (topNLabels: string[] | null) => void
     ) => {
-        console.info("  classifying image:", imagePath);
+        outputter.infoVerbose("  classifying image:", imagePath);
 
         // ref: https://github.com/googleapis/nodejs-vision/blob/master/samples/detect.js
         // ref: https://cloud.google.com/nodejs/docs/reference/vision/0.22.x/
@@ -135,7 +146,7 @@ export namespace ImageClassifier {
                         topNLabels = topLabels;
                     }
                 } else {
-                    console.error("no labels returned from API!");
+                    outputter.errorVerbose("no labels returned from Google Vision API");
                 }
 
                 // TODO xxx replace cb with async await
@@ -154,16 +165,17 @@ export namespace ImageClassifier {
     const classifySmallImage = (
         properties: ImageProperties,
         options: Options,
+        outputter: IOutputter,
         handleError: (error: any) => void,
         done: (properties: ImageProperties) => void
     ) => {
-        _classifyImage(properties.imagePath, options, handleError, topNLabels => {
+        _classifyImage(properties.imagePath, options, outputter, handleError, topNLabels => {
             if (topNLabels) {
                 const activeProperties = ImageProperties.withTopLabels(properties, topNLabels);
 
                 done(activeProperties);
             } else {
-                console.warn("got no labels from Google");
+                outputter.warn("No labels were returned from classification (Google Vision API)");
                 done(properties);
             }
         });

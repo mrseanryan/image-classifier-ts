@@ -3,6 +3,7 @@ import * as path from "path";
 import { ImageLocation } from "../model/ImageLocation";
 import { Options } from "./args/Args";
 import { AUTO_DATE_MAP_CSV_FILENAME, MapDateToLocation } from "./MapDateToLocation";
+import { IOutputter } from "./output/IOutputter";
 import { SimpleDate } from "./SimpleDate";
 
 export class MapDateToLocationManager {
@@ -30,14 +31,14 @@ export class MapDateToLocationManager {
         this.autoMap.dumpToDisk(filePath);
     }
 
-    getLocationForFile(filepath: string): string | null {
+    getLocationForFile(filepath: string, outputter: IOutputter): string | null {
         // manual file takes priority (to let user adjust)
-        const manualLocation = this.manualMap.getLocationForFile(filepath);
+        const manualLocation = this.manualMap.getLocationForFile(filepath, outputter);
         if (manualLocation) {
             return manualLocation.toString();
         }
 
-        const autoLocation = this.autoMap.getLocationForFile(filepath);
+        const autoLocation = this.autoMap.getLocationForFile(filepath, outputter);
 
         if (autoLocation) {
             // Use a separate (usually less specific) format for derived location,

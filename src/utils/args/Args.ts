@@ -1,5 +1,7 @@
 import { triggerAsyncId } from "async_hooks";
 
+import { Verbosity } from "../output/Verbosity";
+
 export type Args = {
     imageInputDir: string;
     imageOutputDir: string;
@@ -15,4 +17,5 @@ export type Options = {
     minScore: number;
     replaceOnMove: boolean;
     topNLabels: number;
+    verbosity: Verbosity;
 };

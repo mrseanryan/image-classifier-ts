@@ -1,10 +1,13 @@
 import { GeoCodeResponseParser } from "../src/geoCode/GeoCodeResponseParser";
 import { ImageLocation } from "../src/model/ImageLocation";
 import { DefaultArgs } from "../src/utils/args/DefaultArgs";
+import { OutputterFactory } from "../src/utils/output/OutputterFactory";
 import { GeoCoderTestData } from "../testUtils/GeoCoderTestData";
 import { TestImages } from "../testUtils/TestImages";
 
 describe("GeoCodeResponseParser tests", () => {
+    const outputter = OutputterFactory.createNull();
+
     it("should parse response from Google Geocoding servier", () => {
         const response = GeoCoderTestData.ROTTERDAM_LOCATION;
 
@@ -15,7 +18,12 @@ describe("GeoCodeResponseParser tests", () => {
             locationFormat: "{country}.{area1}.{area2}.{area3}"
         });
 
-        const newProperties = GeoCodeResponseParser.parseResponse(properties, response, options);
+        const newProperties = GeoCodeResponseParser.parseResponse(
+            properties,
+            response,
+            options,
+            outputter
+        );
 
         expect(newProperties.location).toEqual(
             new ImageLocation(

@@ -1,3 +1,4 @@
+import { Verbosity } from "../output/Verbosity";
 import { Args } from "./Args";
 import { DefaultArgs } from "./DefaultArgs";
 import { UsageText } from "./UsageText";
@@ -53,12 +54,16 @@ export namespace ArgsParser {
                 return value;
             };
 
-            const assertHasNumericValue = (message: string): number => {
+            const assertHasNumericValue = (message: string, min: number, max: number): number => {
                 const textValue = assertHasValue(message);
 
                 const numberValue = Number.parseInt(textValue, 10);
 
                 if (!isFinite(numberValue)) {
+                    throw new Error(message);
+                }
+
+                if (numberValue < min || numberValue > max) {
                     throw new Error(message);
                 }
 
@@ -92,7 +97,9 @@ export namespace ArgsParser {
                     break;
                 case "-minScore":
                     args.options.minScore = assertHasNumericValue(
-                        "minScore must have a value, like: minScore=0.8"
+                        "minScore must have a value, like: minScore=0.8",
+                        0,
+                        1
                     );
                     break;
                 case "-replaceOnMove":
@@ -100,8 +107,18 @@ export namespace ArgsParser {
                     break;
                 case "-topNLabels":
                     args.options.topNLabels = assertHasNumericValue(
-                        "topNLabels must have a value, like: topNLabels=2"
+                        "topNLabels must have a value, like: topNLabels=2",
+                        1,
+                        10
                     );
+                    break;
+                case "-verbosity":
+                    const verbosityNumber = assertHasNumericValue(
+                        "verbosity must have a value (1-3), like: verbosity=2",
+                        1,
+                        3
+                    );
+                    args.options.verbosity = verbosityNumber;
                     break;
                 case "":
                     break;

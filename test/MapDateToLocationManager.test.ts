@@ -5,6 +5,7 @@ import { DefaultArgs } from "../src/utils/args/DefaultArgs";
 import { FileUtils } from "../src/utils/FileUtils";
 import { MapDateToLocation } from "../src/utils/MapDateToLocation";
 import { MapDateToLocationManager } from "../src/utils/MapDateToLocationManager";
+import { OutputterFactory } from "../src/utils/output/OutputterFactory";
 import { SimpleDate } from "../src/utils/SimpleDate";
 import { TestImages } from "../testUtils/TestImages";
 
@@ -14,6 +15,8 @@ const modifiedDateInManualMap = new SimpleDate(7, 15, 2018);
 const modifiedDateInAutoMap = new SimpleDate(7, 23, 2017);
 
 describe("MapDateToLocationManager tests", () => {
+    const outputter = OutputterFactory.createNull();
+
     it("should parse locations from a manual CSV file then auto CSV file and apply to a file", () => {
         const autoMap = createAutoMapDateToLocation();
         const manualMap = MapDateToLocation.parseFromCsv(
@@ -45,7 +48,8 @@ describe("MapDateToLocationManager tests", () => {
 
             const imageFilename = TestImages.imageWithExifAndGeoLocation;
             const actualLocation = manager.getLocationForFile(
-                path.join(PATH_TO_TEST_DATA, imageFilename)
+                path.join(PATH_TO_TEST_DATA, imageFilename),
+                outputter
             );
 
             // The manual map takes priority:
@@ -72,11 +76,11 @@ describe("MapDateToLocationManager tests", () => {
 
             const filePath = path.join(PATH_TO_TEST_DATA, imageFilename);
             {
-                const modified = FileUtils.getModificationDateOfFile(filePath);
+                const modified = FileUtils.getModificationDateOfFile(filePath, outputter);
                 expect(modified!.toString()).toEqual(modifiedDateInAutoMap.toString());
             }
 
-            const actualLocation = manager.getLocationForFile(filePath);
+            const actualLocation = manager.getLocationForFile(filePath, outputter);
 
             // Manual map has no entry - so auto map should win,
             // to 2 components only (derivedLocationFormat)
