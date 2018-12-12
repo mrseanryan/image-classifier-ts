@@ -20,6 +20,11 @@ image-classifier-ts is stable, with ongoing development (Linux, Mac, Windows) fo
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/mrseanryan)
 
+## why?
+
+The project was started as a way to avoid depending on particular photo software such as Picasa,
+and also to save time spent on sorting tons of photos!
+
 ## dependencies
 
 -   Node 8.11.3 or higher
@@ -128,9 +133,6 @@ see the [contributing readme](CONTRIBUTING.md).
 ## origin
 
 This project is based on the excellent seeder project [typescript-library-starter](https://github.com/alexjoverm/typescript-library-starter).
-
-The project was started as a way to avoid depending on particular photo software such as Picasa,
-and also to save time spent on sorting tons of photos!
 
 ### libaries
 
