@@ -112,14 +112,11 @@
         "coveralls": "^3.0.2",
         "cross-env": "^5.2.0",
         "cz-conventional-changelog": "^2.1.0",
-        "exifreader": "^2.5.0",
         "husky": "^1.0.1",
-        "image-size": "^0.6.3",
         "jest": "^23.6.0",
         "jest-config": "^23.6.0",
         "lint-staged": "^8.0.0",
         "lodash.camelcase": "^4.3.0",
-        "node-fetch": "^2.3.0",
         "prettier": "^1.14.3",
         "prompt": "^1.0.0",
         "replace-in-file": "^3.4.2",
@@ -138,11 +135,14 @@
         "tslint-config-prettier": "^1.15.0",
         "tslint-config-standard": "^8.0.1",
         "typedoc": "^0.13.0",
-        "typescript": "^3.0.3",
-        "xmldom": "^0.1.27"
+        "typescript": "^3.0.3"
     },
     "dependencies": {
         "@google-cloud/vision": "^0.23.0",
-        "sharp": "^0.21.0"
+        "exifreader": "^2.5.0",
+        "image-size": "^0.6.3",
+        "node-fetch": "^2.3.0",
+        "sharp": "^0.21.0",
+        "xmldom": "^0.1.27"
     }
 }
