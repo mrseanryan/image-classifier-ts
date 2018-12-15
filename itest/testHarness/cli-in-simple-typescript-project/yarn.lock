@@ -1097,10 +1097,10 @@ ignore@^3.3.5:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.3.10.tgz#0a97fb876986e8081c631160f8f9f389157f0043"
   integrity sha512-Pgs951kaMm5GXP7MOvxERINe3gsaVjUWFm+UZPSq9xYriQAksyhg0csnS0KXSNRD5NmNdapXEpjxG49+AKh/ug==
 
-image-classifier-ts@^1.9.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/image-classifier-ts/-/image-classifier-ts-1.9.0.tgz#e6ffef9e92aa821d3e01e99bb5e979761c722ab7"
-  integrity sha512-eqvtJekvK2ikBTSH7o7ABCwy2hIDihOYVmPwr9VVmi+q1ZjEIzm0sK6ElOHYJp+8yX5F1sDNB+wQLvPbuu5W2g==
+image-classifier-ts@^1.10.0:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/image-classifier-ts/-/image-classifier-ts-1.10.0.tgz#1656f245f665e755e83de9cba91f7604de6bac3b"
+  integrity sha512-aMYGrV2q9FWPY0bVD+NYzGVKzqgwDaw/9wmhkRGk52ANXeeUHiKQ1/YgbFCuYADzPGteq/7hm2byAKKwBw00rA==
   dependencies:
     "@google-cloud/vision" "^0.23.0"
     "@types/image-size" "^0.0.29"
