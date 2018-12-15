@@ -3,9 +3,10 @@ export namespace UsageText {
     const NEXT_COLUMN = "\t";
 
     export function showUsage() {
-        let scriptName = "node " + process.argv[1];
+        let scriptName = `node ${process.argv[1]}`;
         console.error(
             [
+                `image-classifier-ts`,
                 `USAGE: ${scriptName} <path to input dir> <path to output dir> [options]`,
                 `  where options can be:`,
                 `  -derivedLocationFormat=<format>${NEXT_COLUMN}(The format of the 'location' part of the filename for images with a location derived by date)`,
