@@ -1,5 +1,3 @@
-import * as _ from "lodash";
-
 import { DirectoryProcessor } from "./DirectoryProcessor";
 import { ArgsParser } from "./utils/args/ArgsParser";
 import { OutputterFactory } from "./utils/output/OutputterFactory";

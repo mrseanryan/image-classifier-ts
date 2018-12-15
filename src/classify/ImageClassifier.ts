@@ -1,6 +1,6 @@
 // - replace callbacks with promise - async/await
 import * as fs from "fs";
-import * as _ from "lodash";
+import take from "lodash.take";
 import * as os from "os";
 import * as path from "path";
 import * as sharp from "sharp";
@@ -137,7 +137,7 @@ export namespace ImageClassifier {
 
                 if (labels && labels.length > 0) {
                     // note: results already have the best one first:
-                    const topLabels = _.take(
+                    const topLabels = take(
                         labels.filter(l => l.score >= options.minScore && isLabelOk(l.description)),
                         options.topNLabels
                     ).map(l => StringUtils.replaceAll(l.description, " ", "-"));

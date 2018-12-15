@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import * as _ from "lodash";
 import * as path from "path";
 
 import { ImageClassifier } from "./classify/ImageClassifier";
@@ -9,7 +8,6 @@ import { ImageProperties } from "./model/ImageProperties";
 import { Args, Options } from "./utils/args/Args";
 import { ConsoleReporter } from "./utils/ConsoleReporter";
 import { ExifUtils } from "./utils/ExifUtils";
-import { FileUtils } from "./utils/FileUtils";
 import { ImageDimensions } from "./utils/ImageDimensions";
 import { MapDateToLocation } from "./utils/MapDateToLocation";
 import { MapDateToLocationManager } from "./utils/MapDateToLocationManager";
