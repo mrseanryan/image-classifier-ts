@@ -2,7 +2,6 @@
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import * as sharp from "sharp";
 
 import { ImageProperties } from "../model/ImageProperties";
 import { Options } from "../utils/args/Args";
@@ -10,6 +9,8 @@ import { Nodash } from "../utils/Nodash";
 import { IOutputter } from "../utils/output/IOutputter";
 import { StringUtils } from "../utils/StringUtils";
 import { GoogleVision } from "./GoogleVision";
+
+const sharp = require("sharp");
 
 const vision = require("@google-cloud/vision");
 
@@ -102,7 +103,7 @@ export namespace ImageClassifier {
             } else {
                 sharp(data)
                     .resize(800)
-                    .toFile(outPath, (sharpError, info) => {
+                    .toFile(outPath, (sharpError: any) => {
                         if (sharpError) {
                             outputter.error("Error resizing file " + filePath, sharpError);
                             handleError(sharpError);
