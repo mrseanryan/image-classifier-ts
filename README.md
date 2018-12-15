@@ -7,8 +7,10 @@ Command line tool to auto-classify images, renaming them with appropriate addres
 image-classifier-ts is stable, with ongoing development (Linux, Mac, Windows) following semantic versioning.
 
 [![Travis](https://img.shields.io/travis/mrseanryan/image-classifier-ts.svg)](https://travis-ci.org/mrseanryan/image-classifier-ts)
+[![node](https://img.shields.io/node/v/image-classifier-ts.svg)](https://nodejs.org)
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/mrseanryan/image-classifier-ts.svg)](https://greenkeeper.io/)
+[![Dependencies](https://david-dm.org/mrseanryan/image-classifier-ts.svg)](https://david-dm.org/mrseanryan/image-classifier-ts)
 [![Dev Dependencies](https://david-dm.org/mrseanryan/image-classifier-ts/dev-status.svg)](https://david-dm.org/mrseanryan/image-classifier-ts?type=dev)
 
 [![npm Package](https://img.shields.io/npm/v/image-classifier-ts.svg?style=flat-square)](https://www.npmjs.org/package/image-classifier-ts)
