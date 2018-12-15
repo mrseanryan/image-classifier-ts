@@ -28,7 +28,7 @@ export namespace DirectoryProcessor {
             outputter.infoVerbose("[processDirectory] - done");
             return !hasError;
         } catch (error) {
-            outputter.errorVerbose("[processDirectory] error", error);
+            outputter.error("[processDirectory] error", error);
             return false;
         }
     }
@@ -63,9 +63,9 @@ const isFileExtensionOk = (filepath: string) => {
 
     // extensions - works for files with something before the '.'
     const ext = path.extname(filepath);
-    const badExtensions = [".csv", ".ini", ".mp4", ".mpg", ".mov"];
+    const goodExtensions = [".jpg", ".jpeg"];
 
-    return !badExtensions.some(badExt => badExt.toLowerCase() === ext.toLowerCase());
+    return goodExtensions.some(goodExt => goodExt.toLowerCase() === ext.toLowerCase());
 };
 
 const isDirectory = (filepath: string) => {
