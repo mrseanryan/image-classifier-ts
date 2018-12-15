@@ -17,6 +17,9 @@
         "dist"
     ],
     "author": "Sean Ryan <mr.sean.ryan(at)gmail.com>",
+    "bin": {
+        "image-classifier-ts": "./dist/lib/cli.js"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/mrseanryan/image-classifier-ts.git"
@@ -28,7 +31,8 @@
     "scripts": {
         "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
         "prebuild": "rimraf dist",
-        "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src",
+        "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src && yarn build:cli",
+        "build:cli": "echo #!/usr/bin/env node > ./dist/lib/cli.js && cat ./dist/lib/main.js >> ./dist/lib/cli.js && chmod +x ./dist/lib/cli.js",
         "build:minimal": "tsc --module commonjs",
         "build-and-test": "yarn build:minimal && yarn test",
         "start": "rollup -c rollup.config.ts -w",
