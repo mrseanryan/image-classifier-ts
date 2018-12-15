@@ -1,0 +1,19 @@
+{
+    "name": "cli-in-simple-typescript-project",
+    "version": "0.0.1",
+    "description": "A test harness for image-classifier-ts (as cli) to test consuming the package.",
+    "main": "index.js",
+    "scripts": {
+        "run-from-bin": "./image-classifier-ts",
+        "run-from-node": "node node_modules/image-classifier-ts/dist/lib/main",
+        "test": "yarn run-from-node"
+    },
+    "author": "Sean Ryan <mr.sean.ryan(at)gmail.com>",
+    "license": "MIT",
+    "dependencies": {
+        "image-classifier-ts": "^1.9.0",
+        "tslint": "^5.11.0",
+        "typescript": "^3.2.2"
+    },
+    "private": true
+}
