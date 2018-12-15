@@ -66,6 +66,12 @@ Inside your npm project:
 
 `yarn add image-classifier-ts`
 
+via bash script:
+
+`node_modules/image-classifier-ts/dist/lib/cli.js <input directory> <output directory>`
+
+OR via node:
+
 `node node_modules/image-classifier-ts/dist/lib/main <input directory> <output directory>`
 
 #### from the source code
