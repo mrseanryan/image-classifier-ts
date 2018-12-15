@@ -48,10 +48,6 @@ Install:
 -   Yarn
 -   Node 8.3.11 (or higher)
 
-```
-yarn
-```
-
 ### 2 Configure your Google API key
 
 see [configure Google APIs](configure-google.md).
@@ -60,7 +56,23 @@ see [configure Google APIs](configure-google.md).
 
 *note: the processed images will be moved to the output directory. so you may want to point 'input directory' to a *copy* of your images directory.*
 
-#### from the npm package
+#### 3 ways to run
+
+You can run `image-classifier-ts` in one of three ways:
+
+-   a) as a globally install command line tool (this is the easiest way)
+-   OR b) as an npm package inside an npm project
+-   OR c) from the source code
+
+#### a) install globally as a command line tool
+
+`npm i -g image-classifier-ts@latest --production`
+
+To use:
+
+`image-classifier-ts <path to image directory> <path to output directory> [-filenameFormat=<file name format>]`
+
+#### OR b) from the npm package
 
 Inside your npm project:
 
@@ -74,7 +86,11 @@ OR via node:
 
 `node node_modules/image-classifier-ts/dist/lib/main <input directory> <output directory>`
 
-#### from the source code
+#### OR c) from the source code
+
+```
+yarn
+```
 
 _On Windows: use a bash shell like `git bash`._
 
