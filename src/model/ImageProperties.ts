@@ -4,6 +4,7 @@ import { ExifTagSet } from "../utils/ExifUtils";
 import { FileUtils } from "../utils/FileUtils";
 import { IOutputter } from "../utils/output/IOutputter";
 import { SimpleDate } from "../utils/SimpleDate";
+import { Dimensions } from "./Dimensions";
 import { ImageLocation } from "./ImageLocation";
 
 // immutable object!
@@ -13,6 +14,7 @@ export class ImageProperties {
             properties.imagePath,
             properties.topLabels,
             properties.exif,
+            properties.dimensions,
             fileSizeMb,
             properties.location
         );
@@ -23,6 +25,7 @@ export class ImageProperties {
             properties.imagePath,
             properties.topLabels,
             properties.exif,
+            properties.dimensions,
             properties.fileSizeMb,
             location
         );
@@ -33,6 +36,7 @@ export class ImageProperties {
             properties.imagePath,
             topLabels,
             properties.exif,
+            properties.dimensions,
             properties.fileSizeMb,
             properties.location
         );
@@ -42,6 +46,7 @@ export class ImageProperties {
         readonly imagePath: string,
         readonly topLabels: string[] = [],
         readonly exif: ExifTagSet = new ExifTagSet(),
+        readonly dimensions: Dimensions | null = null,
         readonly fileSizeMb: number | null = null,
         readonly location: ImageLocation | null = null
     ) {}

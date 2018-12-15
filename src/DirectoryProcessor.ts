@@ -10,6 +10,7 @@ import { Args, Options } from "./utils/args/Args";
 import { ConsoleReporter } from "./utils/ConsoleReporter";
 import { ExifUtils } from "./utils/ExifUtils";
 import { FileUtils } from "./utils/FileUtils";
+import { ImageDimensions } from "./utils/ImageDimensions";
 import { MapDateToLocation } from "./utils/MapDateToLocation";
 import { MapDateToLocationManager } from "./utils/MapDateToLocationManager";
 import { IOutputter } from "./utils/output/IOutputter";
@@ -163,7 +164,8 @@ function getAllImageProperties(
             return new ImageProperties(
                 imagePath,
                 [],
-                ExifUtils.readFile(imagePath, outputter) || undefined
+                ExifUtils.readFile(imagePath, outputter) || undefined,
+                ImageDimensions.getDimensions(imagePath)
             );
         })
         .filter(f => !!f) as ImageProperties[];

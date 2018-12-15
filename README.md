@@ -105,7 +105,7 @@ To see more detailed usage info:
 ##### example:
 
 ```
-./go.sh ../my-photos -filenameFormat={year}/{location}/{topLabel}/{combinedLabels}-{fileSizeMb}--{filename}
+./go.sh ../my-photos -filenameFormat={year}/{location}/{topLabel}/{combinedLabels}-{fileSizeMb}-{width}x{height}--{filename}
 ```
 
 ##### advanced - specifying locations by date

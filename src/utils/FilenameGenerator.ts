@@ -4,12 +4,14 @@ import { NameGeneratorUtil } from "./NameGeneratorUtil";
 import { StringUtils } from "./StringUtils";
 
 export enum FileFormatToken {
-    Year = "year",
-    TopLabel = "topLabel",
     CombinedLabels = "combinedLabels",
     Filename = "filename",
+    FileSizeMb = "fileSizeMb",
+    Height = "height",
     Location = "location",
-    FileSizeMb = "fileSizeMb"
+    TopLabel = "topLabel",
+    Width = "width",
+    Year = "year"
 }
 
 export type FileNameTokens = Map<FileFormatToken, string>;

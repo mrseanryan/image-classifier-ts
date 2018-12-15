@@ -13,7 +13,7 @@ export namespace UsageText {
                 `    example: -derivedLocationFormat={country}_{area1}_{area2}_{area3}`,
                 `  -dryRun${NEXT_COLUMN}(Perform a 'dry run' without actually moving any files).`,
                 `  -filenameFormat=<format>`,
-                `    example: -filenameFormat={year}/{location}/{topLabel}/{combinedLabels}-{fileSizeMb}--{filename}`,
+                `    example: -filenameFormat={year}/{location}/{topLabel}/{combinedLabels}-{fileSizeMb}-{width}x{height}--{filename}`,
                 `  -geoCode${NEXT_COLUMN}(Try to identify the address (geographical location) of the image).`,
                 `  -help OR -h${NEXT_COLUMN}(show this usage text)`,
                 `  -locationFormat=<format>${NEXT_COLUMN}(The format of the 'location' part of the filename)`,

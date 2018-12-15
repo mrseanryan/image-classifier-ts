@@ -9,7 +9,8 @@ describe("FilenameGenerator tests", () => {
     const outputter = OutputterFactory.createNull();
 
     it("it should handle a complex format", () => {
-        let filenameFormat = "{year}/{location}/{topLabel}/{combinedLabels}--{filename}";
+        let filenameFormat =
+            "{year}/{location}/{topLabel}/{combinedLabels}-{fileSizeMb}-{width}x{height}--{filename}";
 
         const imagePath =
             "./static/testData/withLocation/" + TestImages.imageWithExifAndGeoLocation;
@@ -21,6 +22,10 @@ describe("FilenameGenerator tests", () => {
 
         const location = "Rotterdam";
 
+        const fileSizeMb = "3Mb";
+        const width = "1200";
+        const height = "800";
+
         const tokens: FileNameTokens = new Map<FileFormatToken, string>();
         {
             tokens.set(FileFormatToken.Filename, originalFilename);
@@ -31,6 +36,10 @@ describe("FilenameGenerator tests", () => {
                 FileUtils.getModificationYearOfFile(imagePath, outputter)
             );
             tokens.set(FileFormatToken.Location, location);
+
+            tokens.set(FileFormatToken.FileSizeMb, fileSizeMb);
+            tokens.set(FileFormatToken.Width, width);
+            tokens.set(FileFormatToken.Height, height);
         }
 
         let actualNewFilename = FilenameGenerator.generateFilename(tokens, filenameFormat);
@@ -40,7 +49,7 @@ describe("FilenameGenerator tests", () => {
         actualNewFilename = fixedYear + actualNewFilename.substr(4);
 
         expect(actualNewFilename).toEqual(
-            `${fixedYear}/${location}/${topDesc}/${combinedDesc}--${originalFilename}`
+            `${fixedYear}/${location}/${topDesc}/${combinedDesc}-${fileSizeMb}-${width}x${height}--${originalFilename}`
         );
     });
 });

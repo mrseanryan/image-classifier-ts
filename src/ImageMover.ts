@@ -22,6 +22,7 @@ export namespace ImageMover {
         const tokens: FileNameTokens = new Map<FileFormatToken, string>();
         {
             const filename = path.basename(imageProps.imagePath);
+
             tokens.set(FileFormatToken.Filename, filename);
             tokens.set(FileFormatToken.TopLabel, imageProps.topLabel);
             tokens.set(FileFormatToken.CombinedLabels, imageProps.topLabels.join("_"));
@@ -30,6 +31,11 @@ export namespace ImageMover {
                 imageProps.modificationDate(outputter).year.toString()
             );
             tokens.set(FileFormatToken.FileSizeMb, imageProps.fileSizeMbText);
+
+            if (imageProps.dimensions) {
+                tokens.set(FileFormatToken.Width, imageProps.dimensions.width.toString());
+                tokens.set(FileFormatToken.Height, imageProps.dimensions.height.toString());
+            }
         }
 
         const location = getLocation(imageProps, mapDateToLocationManager, outputter);
