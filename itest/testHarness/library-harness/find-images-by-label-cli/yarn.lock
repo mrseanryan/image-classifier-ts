@@ -1168,10 +1168,10 @@ ignore@^3.3.5:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.3.10.tgz#0a97fb876986e8081c631160f8f9f389157f0043"
   integrity sha512-Pgs951kaMm5GXP7MOvxERINe3gsaVjUWFm+UZPSq9xYriQAksyhg0csnS0KXSNRD5NmNdapXEpjxG49+AKh/ug==
 
-image-classifier-ts@^2.0.9:
-  version "2.0.9"
-  resolved "https://registry.yarnpkg.com/image-classifier-ts/-/image-classifier-ts-2.0.9.tgz#05816471a9b80e620e38e39a5cc5db63b06ff2d1"
-  integrity sha512-gf9iKDb2rUYpzuC4zdON61DP5Hrp6mYH03U6/qk/cbWSvCsLlHDtTp8LqVZF3HQv3ys330RR8Ar1AuQ16jm5og==
+image-classifier-ts@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/image-classifier-ts/-/image-classifier-ts-2.1.0.tgz#57c72db35df15d5b61c866a48573e714e2adf0e1"
+  integrity sha512-OhdM22rKrP0bX/MVn05Ws8pt2ITH+fPsKrGR00um30TscA7NA0qn8JqawI9n1EqA8XQI+OTpiqKME5i9dTgpLQ==
   dependencies:
     "@google-cloud/vision" "^0.23.0"
     exifreader "^2.5.0"

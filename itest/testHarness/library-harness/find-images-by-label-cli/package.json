@@ -11,7 +11,7 @@
     "author": "Sean Ryan <mr.sean.ryan(at)gmail.com>",
     "license": "MIT",
     "dependencies": {
-        "image-classifier-ts": "^2.0.9"
+        "image-classifier-ts": "^2.1.0"
     },
     "private": true,
     "devDependencies": {
