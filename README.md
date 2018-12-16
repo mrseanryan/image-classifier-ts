@@ -39,7 +39,7 @@ and also to save time spent on sorting tons of photos!
 -   the output filename can include date, dimensions, file size as well as labels and adress provided by Google
 -   can take geographic locations from mobile photos and apply them to photos taken with a non-GPS device (matching by date)
 
-## usage
+## usage - as cli (command line tool)
 
 ### 1 Install dependencies
 
@@ -60,11 +60,11 @@ see [configure Google APIs](configure-google.md).
 
 You can run `image-classifier-ts` in one of three ways:
 
--   a) as a globally install command line tool (this is the easiest way)
+-   a) as a globally installed command line tool (this is the easiest way)
 -   OR b) as an npm package inside an npm project
 -   OR c) from the source code
 
-#### a) install globally as a command line tool
+##### a) install globally as a command line tool
 
 `npm i -g image-classifier-ts@latest --production`
 
@@ -72,9 +72,9 @@ To use:
 
 `image-classifier-ts <path to image directory> <path to output directory> [-filenameFormat=<file name format>]`
 
-#### OR b) from the npm package
+##### OR b) from the npm package
 
-Inside your npm project:
+Install inside your npm project:
 
 `yarn add image-classifier-ts`
 
@@ -86,7 +86,7 @@ OR via node:
 
 `node node_modules/image-classifier-ts/dist/lib/main <input directory> <output directory>`
 
-#### OR c) from the source code
+##### OR c) from the source code
 
 ```
 yarn
@@ -124,13 +124,13 @@ To see more detailed usage info:
 ./go.sh
 ```
 
-##### example:
+###### example:
 
 ```
 ./go.sh ../my-photos -filenameFormat={year}/{location}/{topLabel}/{combinedLabels}-{fileSizeMb}-{width}x{height}--{filename}
 ```
 
-##### advanced - specifying locations by date
+###### advanced - specifying locations by date
 
 You can specify locations for the photos, by date.
 
@@ -141,6 +141,20 @@ The approprite location description will be used when renaming the image files.
 For an example, see [mapDateToLocation.csv](./static/testData/withLocation/mapDateToLocation.csv)
 
 note: if the location is unknown, and the filename format includes `{location}`, then the image will NOT be moved.
+
+## usage - as a library in a node based project
+
+Install inside your npm project:
+
+`yarn add image-classifier-ts`
+
+Then in TypeScript, you can import the library:
+
+```ts
+import * as ic from "image-classifier-ts";
+```
+
+For a working example, see the [library test harness](./itest/testHarness/library-harness/find-images-by-label-cli/readme.md).
 
 ## sites
 
