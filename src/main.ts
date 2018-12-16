@@ -21,8 +21,8 @@ const outputter = OutputterFactory.create(args!.options.verbosity);
  *      - first use imageProps.location THEN mapDateToLocation.csv THEN mapDateToLocation.auto.csv
  */
 DirectoryProcessor.processDirectory(args!, outputter)
-    .then((isOk: boolean) => {
-        if (isOk) {
+    .then(result => {
+        if (result.isOk) {
             console.log("[done]");
         } else {
             console.error("main: [errors occurred]");

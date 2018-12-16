@@ -5,8 +5,8 @@
 // - resolved by making sharp external, adding to dependencies
 
 // note: error importing from @google-cloud/vision
-// - NOT resolved by making it external
-// export * from "./DirectoryProcessor";
+// - resolved by making it external
+export * from "./DirectoryProcessor";
 
 // To include exifreader, xmldom
 export * from "./utils/ExifUtils";
@@ -17,6 +17,9 @@ export * from "./utils/ImageDimensions";
 // To include node-fetch
 export * from "./geoCode/GeoCoder";
 
-// TODO xxx remove
-// tslint:disable-next-line:no-unnecessary-class
-export default class DummyClass {}
+export * from "./utils/args/Args";
+export * from "./utils/args/DefaultArgs";
+
+export * from "./utils/output/ConsoleOutputter";
+export * from "./utils/output/NullOutputter";
+export * from "./utils/output/Verbosity";
