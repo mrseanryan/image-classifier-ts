@@ -23,7 +23,3 @@ export * from "./utils/args/DefaultArgs";
 export * from "./utils/output/ConsoleOutputter";
 export * from "./utils/output/NullOutputter";
 export * from "./utils/output/Verbosity";
-
-// TODO xxx remove
-// tslint:disable-next-line:no-unnecessary-class
-export default class DummyClass {}

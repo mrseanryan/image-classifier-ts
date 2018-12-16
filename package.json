@@ -72,24 +72,24 @@
             "js"
         ],
         "coveragePathIgnorePatterns": [
+            "/itest/",
             "/node_modules/",
+            "/static/",
             "/test/",
-            "DirectoryProcessor",
-            "GeoCoder",
-            "ImageClassifier",
-            "ImageMover",
+            "/testUtils/",
+            "/tools/",
             "main.ts"
         ],
         "coverageThreshold": {
             "global": {
-                "branches": 90,
-                "functions": 95,
-                "lines": 95,
-                "statements": 95
+                "branches": 80,
+                "functions": 80,
+                "lines": 87,
+                "statements": 87
             }
         },
         "collectCoverageFrom": [
-            "src/*.{js,ts}"
+            "src/**/{ConsoleReporter,FilenameGenerator,GeoCodeResponseParser,MapDateToLocation,MapDateToLocationManager,Nodash}.ts"
         ]
     },
     "prettier": {
