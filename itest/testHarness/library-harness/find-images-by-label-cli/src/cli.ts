@@ -19,15 +19,27 @@ const icArgs: ic.Args = Object.assign(ic.DefaultArgs.getDefault(), {});
 icArgs.imageInputDir = inputDir;
 icArgs.options.dryRun = true;
 
-// Medium, to see the results:
-const verbosity = ic.Verbosity.Medium;
+const verbosity = ic.Verbosity.Low;
 
 const outputter = new ic.ConsoleOutputter(verbosity);
 
 ic.DirectoryProcessor.processDirectory(icArgs, outputter)
-    .then(isOk => {
-        if (isOk) {
+    .then(result => {
+        if (result.isOk) {
             console.log(successStyle("[success]"));
+
+            const labelsWanted = labels.split(",");
+
+            const imagesWanted = result.imageProperties.filter(image =>
+                image.topLabels.some(top => labelsWanted.includes(top))
+            );
+
+            console.log(
+                normalStyle(`Found ${imagesWanted.length} images with the labels '${labelsWanted}'`)
+            );
+            console.log(
+                normalStyle(imagesWanted.map(i => `[${i.topLabels.join(",")}] ${i.imagePath} `))
+            );
         } else {
             console.error(errorStyle("[failed]"));
         }
