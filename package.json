@@ -29,6 +29,7 @@
     },
     "scripts": {
         "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
+        "lint:local": "tslint  --project tsconfig.json -t codeFrame",
         "prebuild": "rimraf dist",
         "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src && yarn build:cli",
         "build:cli": "echo #!/usr/bin/env node > dist/lib/cli.js && cat dist/lib/main.js >> dist/lib/cli.js && chmod +x dist/lib/cli.js",
@@ -133,7 +134,7 @@
         "ts-node": "^7.0.1",
         "tslint": "^5.11.0",
         "tslint-config-prettier": "^1.15.0",
-        "tslint-config-standard": "^8.0.1",
+        "tslint-config-standard-sr": "^8.1.0",
         "typedoc": "^0.13.0",
         "typescript": "^3.0.3"
     },
