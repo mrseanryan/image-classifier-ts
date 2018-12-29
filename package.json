@@ -134,7 +134,7 @@
         "ts-node": "^7.0.1",
         "tslint": "^5.11.0",
         "tslint-config-prettier": "^1.15.0",
-        "tslint-config-standard-sr": "^8.1.0",
+        "tslint-config-standard-sr": "^8.2.0",
         "typedoc": "^0.13.0",
         "typescript": "^3.0.3"
     },
