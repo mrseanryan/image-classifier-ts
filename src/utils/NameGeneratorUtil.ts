@@ -29,7 +29,7 @@ export namespace NameGeneratorUtil {
 
     function validateFormat(format: string, description: string) {
         if (!hasTokenMarkers(format)) {
-            throw new Error(`Invalid ${description} name format`);
+            throw new Error(`Invalid ${description} name format: '${format}'`);
         }
     }
 

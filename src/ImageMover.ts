@@ -12,12 +12,23 @@ import { IOutputter } from "./utils/output/IOutputter";
 const renamePromise = promisify(fs.rename);
 
 export namespace ImageMover {
-    export async function move(
+    export async function dryRunMove(
         imageProps: ImageProperties,
         options: Options,
         imageOutputDir: string,
         mapDateToLocationManager: MapDateToLocationManager,
         outputter: IOutputter
+    ): Promise<boolean> {
+        return move(imageProps, options, imageOutputDir, mapDateToLocationManager, outputter, true);
+    }
+
+    export async function move(
+        imageProps: ImageProperties,
+        options: Options,
+        imageOutputDir: string,
+        mapDateToLocationManager: MapDateToLocationManager,
+        outputter: IOutputter,
+        isDryRun: boolean = false
     ): Promise<boolean> {
         const tokens: FileNameTokens = new Map<FileFormatToken, string>();
         {
@@ -52,7 +63,10 @@ export namespace ImageMover {
         const newFilename = FilenameGenerator.generateFilename(tokens, options.filenameFormat);
 
         const subDir = path.dirname(newFilename);
-        FileUtils.ensureSubDirsExist(imageOutputDir, subDir);
+
+        if (!isDryRun) {
+            FileUtils.ensureSubDirsExist(imageOutputDir, subDir);
+        }
 
         const newPath = path.join(imageOutputDir, newFilename);
 
@@ -61,9 +75,13 @@ export namespace ImageMover {
             return false;
         }
 
-        outputter.info("moving image ", imageProps.imagePath, " => ", newPath);
+        if (isDryRun) {
+            outputter.info("[dry run] would move image ", imageProps.imagePath, " => ", newPath);
+        } else {
+            outputter.info("moving image ", imageProps.imagePath, " => ", newPath);
 
-        await renamePromise(imageProps.imagePath, newPath);
+            await renamePromise(imageProps.imagePath, newPath);
+        }
 
         return true;
     }

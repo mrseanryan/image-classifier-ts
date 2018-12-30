@@ -302,7 +302,15 @@ async function doClassifyPhaseForImage(
     ConsoleReporter.report(imageProps, outputter);
 
     let wasMoved = false;
-    if (!args.options.dryRun) {
+    if (args.options.dryRun) {
+        ImageMover.dryRunMove(
+            imageProps,
+            args.options,
+            args.imageOutputDir,
+            mapDateToLocationManager,
+            outputter
+        );
+    } else {
         wasMoved = await ImageMover.move(
             imageProps,
             args.options,
