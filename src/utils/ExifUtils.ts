@@ -79,7 +79,27 @@ export class ExifTagSet {
     }
 
     getDateStamp(): SimpleDate | null {
-        const dateValueYMD = this.tryGet(ExifTag.GPSDateStamp) || this.tryGet(ExifTag.DateTime);
+        // issue: some images have valid DateTime, but GPSDateStamp is in the future!
+        // so, parse both and try to pick the best one:
+        const dates = this.getAvailableDateStamps();
+
+        const now = new Date();
+        const nowSimple = SimpleDate.fromDate(now);
+
+        const validDates = dates.filter(d => d.year <= nowSimple.year && d.year > 1970);
+
+        return validDates[0] || null;
+    }
+
+    private getAvailableDateStamps(): SimpleDate[] {
+        return [
+            this.tryGetExifDateStamp(ExifTag.GPSDateStamp),
+            this.tryGetExifDateStamp(ExifTag.DateTime)
+        ].filter(d => !!d) as SimpleDate[];
+    }
+
+    private tryGetExifDateStamp(tag: ExifTag): SimpleDate | null {
+        const dateValueYMD = this.tryGet(tag);
 
         if (!dateValueYMD) {
             return null;
