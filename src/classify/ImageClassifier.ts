@@ -23,7 +23,7 @@ export namespace ImageClassifier {
         outputter: IOutputter
     ): Promise<ImageProperties> {
         return new Promise<ImageProperties>((resolve, reject) => {
-            _classifyImageWithResize(
+            classifyImageWithResize(
                 properties,
                 options,
                 outputter,
@@ -36,7 +36,7 @@ export namespace ImageClassifier {
         });
     }
 
-    export function _classifyImageWithResize(
+    function classifyImageWithResize(
         properties: ImageProperties,
         options: Options,
         outputter: IOutputter,
@@ -176,8 +176,7 @@ export namespace ImageClassifier {
 
                 done(activeProperties);
             } else {
-                outputter.warn("No labels were returned from classification (Google Vision API)");
-                done(properties);
+                handleError("No labels were returned from classification (Google Vision API)");
             }
         });
     };
