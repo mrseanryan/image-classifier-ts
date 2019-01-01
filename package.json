@@ -90,7 +90,7 @@
             }
         },
         "collectCoverageFrom": [
-            "src/**/{ConsoleReporter,FilenameGenerator,GeoCodeResponseParser,MapDateToLocation,MapDateToLocationManager,Nodash}.ts"
+            "src/**/{ConsoleReporter,FilenameGenerator,GeoCodeResponseParser,MapDateToLocation,MapDateToLocationManager,Nodash,SimpleDate}.ts"
         ]
     },
     "prettier": {

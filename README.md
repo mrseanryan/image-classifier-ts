@@ -37,7 +37,7 @@ and also to save time spent on sorting tons of photos!
 -   auto classify the image using the Google Vision API
 -   determine geographic location (address) of an image using the Google Geocoding API
 -   the output filename can include date, dimensions, file size as well as labels and adress provided by Google
--   can take geographic locations from mobile photos and apply them to photos taken with a non-GPS device (matching by date)
+-   can take geographic locations from mobile photos and apply them to photos taken with a non-GPS device (matching by closest time for that date)
 
 ## usage - as cli (command line tool)
 

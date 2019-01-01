@@ -105,18 +105,8 @@ export class ExifTagSet {
             return null;
         }
 
-        // Y:M:D
-        const parts = dateValueYMD.split(":");
-
-        const parsePart = (index: number): number => {
-            return parseInt(parts[index], 10);
-        };
-
-        const year = parsePart(0);
-        const month = parsePart(1);
-        const day = parsePart(2);
-
-        return new SimpleDate(month, day, year);
+        // 'Y:M:D' OR 'Y:M:D H:M:S'
+        return SimpleDate.parseFromExifDate(dateValueYMD);
     }
 
     private tryGet(tag: ExifTag): string | null {

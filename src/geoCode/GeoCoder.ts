@@ -34,8 +34,7 @@ export namespace GeoCoder {
         );
 
         if (newProperties.location) {
-            // TODO - could store multiple locations per date, and match to nearest hour
-            autoMapDateToLocation.setLocationForDate(
+            autoMapDateToLocation.addLocationForDateAllowOverwrite(
                 newProperties.modificationDate(outputter),
                 newProperties.location
             );
