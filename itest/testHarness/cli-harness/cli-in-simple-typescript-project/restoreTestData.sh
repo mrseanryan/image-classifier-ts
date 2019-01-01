@@ -2,4 +2,4 @@
 
 ROOT=../../../..
 
-git co $ROOT/static/testData
+git checkout $ROOT/static/testData
