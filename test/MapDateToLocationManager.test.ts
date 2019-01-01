@@ -1,3 +1,4 @@
+import * as os from "os";
 import * as path from "path";
 
 import { ImageLocation } from "../src/model/ImageLocation";
@@ -51,7 +52,7 @@ describe("MapDateToLocationManager tests", () => {
 
     it("should parse locations from a manual CSV file then auto CSV file and apply to a file", () => {
         const autoMap = createAutoMapDateToLocation();
-        const manualMap = MapDateToLocation.parseFromCsv(
+        const manualMap = MapDateToLocation.parseFromCsvAtDirectory(
             PATH_TO_TEST_DATA,
             DefaultArgs.getDefault().options
         );
@@ -224,4 +225,42 @@ describe("MapDateToLocationManager tests", () => {
 
         return map;
     }
+
+    it("should dump auto map to CSV and be able to read it back", () => {
+        const autoMap = createAutoMapDateToLocations();
+        const manualMap = new MapDateToLocation();
+
+        const manager = new MapDateToLocationManager(
+            manualMap,
+            autoMap,
+            DefaultArgs.getDefault().options
+        );
+
+        const pathToCsvFile = manager.dumpAutoMapToDisk(os.tmpdir());
+
+        const parsedMap = MapDateToLocation.parseFromCsvAtPath(pathToCsvFile, options);
+
+        const checkDates = (date: SimpleDate) => {
+            const parsedLocation = parsedMap.getLocationForDate(date);
+            expect(parsedLocation).toBeTruthy();
+
+            const autoMapLocation = autoMap.getLocationForDate(date);
+            expect(autoMapLocation).toBeTruthy();
+
+            // We don't parse the location back - so check 'given location':
+
+            const expectedGivenLocation = autoMapLocation!.toString();
+
+            expect(parsedLocation!.givenLocation).toEqual(expectedGivenLocation);
+        };
+
+        // Dates that should be in file:
+        checkDates(modifiedDateInAutoMapAt14h00);
+        checkDates(modifiedDateInAutoMapAt14h15);
+        checkDates(modifiedDateInAutoMapAt15h00);
+
+        // Dates that should NOT be in file:
+        const dateNotInMap = new SimpleDate(11, 11, 1918, 11, 11, 11);
+        expect(parsedMap.getLocationForDate(dateNotInMap)).toBeNull();
+    });
 });

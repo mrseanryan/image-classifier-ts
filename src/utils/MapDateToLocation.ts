@@ -18,9 +18,12 @@ type DateAndLocation = {
 };
 
 export class MapDateToLocation {
-    static parseFromCsv(pathToDirectory: string, options: Options): MapDateToLocation {
+    static parseFromCsvAtDirectory(pathToDirectory: string, options: Options): MapDateToLocation {
         const filepath = path.join(pathToDirectory, DATE_MAP_CSV_FILENAME);
+        return this.parseFromCsvAtPath(filepath, options);
+    }
 
+    static parseFromCsvAtPath(filepath: string, options: Options): MapDateToLocation {
         const map = new MapDateToLocation();
 
         if (!fs.existsSync(filepath)) {
@@ -82,12 +85,14 @@ export class MapDateToLocation {
     private mapDateToLocations = new Map<string, DateAndLocation[]>();
     private mapExactDateToLocation = new Map<string, ImageLocation>();
 
-    dumpToDisk(filePath: string) {
+    writeToCsvAtPath(filePath: string) {
         const writer = new CsvWriter(filePath);
 
         this.mapDateToLocations.forEach((value, key) => {
             value.forEach(dateAndLocation => {
                 writer.writeRow([
+                    // File has a 'from' and 'to' date - simplest to just write out 1 row for each date:
+                    dateAndLocation.date.toString(),
                     dateAndLocation.date.toString(),
                     dateAndLocation.location.toString()
                 ]);

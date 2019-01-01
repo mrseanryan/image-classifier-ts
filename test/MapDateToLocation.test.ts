@@ -10,7 +10,7 @@ describe("MapDateToLocation tests", () => {
     const outputter = OutputterFactory.createNull();
 
     it("should parse locations from a CSV file", () => {
-        const map = MapDateToLocation.parseFromCsv(
+        const map = MapDateToLocation.parseFromCsvAtDirectory(
             TestImages.PATH_TO_TEST_DATA,
             DefaultArgs.getDefault().options
         );
@@ -57,7 +57,7 @@ describe("MapDateToLocation tests", () => {
     });
 
     it("should parse locations from a manual CSV file and apply it to a file", () => {
-        const map = MapDateToLocation.parseFromCsv(
+        const map = MapDateToLocation.parseFromCsvAtDirectory(
             TestImages.PATH_TO_TEST_DATA,
             DefaultArgs.getDefault().options
         );

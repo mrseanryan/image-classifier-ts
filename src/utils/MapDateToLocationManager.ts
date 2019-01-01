@@ -1,15 +1,13 @@
 import * as path from "path";
 
-import { ImageLocation } from "../model/ImageLocation";
 import { Options } from "./args/Args";
 import { AUTO_DATE_MAP_CSV_FILENAME, MapDateToLocation } from "./MapDateToLocation";
 import { IOutputter } from "./output/IOutputter";
-import { SimpleDate } from "./SimpleDate";
 
 export class MapDateToLocationManager {
     static fromImageDirectory(imageDir: string, options: Options) {
         return new MapDateToLocationManager(
-            MapDateToLocation.parseFromCsv(imageDir, options),
+            MapDateToLocation.parseFromCsvAtDirectory(imageDir, options),
             new MapDateToLocation(),
             options
         );
@@ -25,10 +23,12 @@ export class MapDateToLocationManager {
      * Dump the auto generated map from date to location (via exit lat/longs) to disk.
      * This is mainly for diagnostics, and to allow user to tune their manual file 'mapDateToLocation.csv'.
      */
-    dumpAutoMapToDisk(imageDir: string) {
+    dumpAutoMapToDisk(imageDir: string): string {
         const filePath = path.join(imageDir, AUTO_DATE_MAP_CSV_FILENAME);
         this.autoMap.removeFromDisk(filePath);
-        this.autoMap.dumpToDisk(filePath);
+        this.autoMap.writeToCsvAtPath(filePath);
+
+        return filePath;
     }
 
     getLocationForFile(filepath: string, outputter: IOutputter): string | null {
