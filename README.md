@@ -4,7 +4,7 @@ Command line tool to auto-classify images, renaming them with appropriate addres
 
 ## status - stable
 
-image-classifier-ts is stable, with ongoing development (Linux, Mac, Windows) following semantic versioning.
+image-classifier-ts is stable, with ongoing development (tested on Windows, Ubuntu Linux) following semantic versioning.
 
 [![Travis](https://img.shields.io/travis/mrseanryan/image-classifier-ts.svg)](https://travis-ci.org/mrseanryan/image-classifier-ts)
 [![node](https://img.shields.io/node/v/image-classifier-ts.svg)](https://nodejs.org)
@@ -67,6 +67,10 @@ You can run `image-classifier-ts` in one of three ways:
 ##### a) install globally as a command line tool
 
 `npm i -g image-classifier-ts@latest --production`
+
+on Ubuntu, you may need administrator permissions via `sudo`:
+
+`sudo npm i -g image-classifier-ts@latest --production`
 
 To use:
 
