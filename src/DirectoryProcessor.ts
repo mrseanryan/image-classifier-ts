@@ -80,7 +80,7 @@ const isFileExtensionOk = (filepath: string) => {
 
     // extensions - works for files with something before the '.'
     const ext = path.extname(filepath);
-    const goodExtensions = [".jpg", ".jpeg"];
+    const goodExtensions = [".jpg", ".jpeg", ".png"];
 
     return goodExtensions.some(goodExt => goodExt.toLowerCase() === ext.toLowerCase());
 };

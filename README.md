@@ -31,6 +31,18 @@ and also to save time spent on sorting tons of photos!
 
 -   Node 8.11.3 or higher
 
+### dependendcies for Windows
+
+We use `sharp` to resize images during processing. `sharp` requires 
+**[node-gyp](https://github.com/nodejs/node-gyp)** to build, so you will need to
+install
+[Microsoft's windows-build-tools](https://github.com/felixrieseberg/windows-build-tools)
+using this command:_
+
+```bash
+npm install --global --production windows-build-tools
+```
+
 ## features
 
 -   process multiple image files and move them to a configurable folder, using a flexible filename template
@@ -38,6 +50,7 @@ and also to save time spent on sorting tons of photos!
 -   determine geographic location (address) of an image using the Google Geocoding API
 -   the output filename can include date, dimensions, file size as well as labels and adress provided by Google
 -   can take geographic locations from mobile photos and apply them to photos taken with a non-GPS device (matching by closest time for that date)
+- supports JPEG, PNG file formats
 
 ## usage - as cli (command line tool)
 
