@@ -138,7 +138,7 @@
         "typescript": "^3.0.3"
     },
     "dependencies": {
-        "@google-cloud/vision": "^0.23.0",
+        "@google-cloud/vision": "^0.24.0",
         "exifreader": "^2.5.0",
         "image-size": "^0.6.3",
         "node-fetch": "^2.3.0",
