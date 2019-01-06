@@ -172,9 +172,9 @@ export namespace ExifUtils {
     function hasFileExif(filepath: string): boolean {
         const extension = path.extname(filepath).toLowerCase();
 
-        // ExifReader supports JPEG, TIFF.
+        // ExifReader supports JPEG.
         // note: some PNG files can have some EXIF data but it's not yet standard.
 
-        return [".jpg", ".jpeg", ".tiff", ".tff"].includes(extension);
+        return [".jpg", ".jpeg"].includes(extension);
     }
 }
