@@ -80,6 +80,13 @@ export namespace ImageClassifier {
         }
     }
 
+     function getSmallerFilePath(filePath: string): string {
+        return path.join(
+            os.tmpdir(),
+            `${path.basename(filePath)}.resized${path.extname(filePath)}`
+        );
+    }
+
     const getFilesizeInMegaBytes = (filename: string) => {
         const stats = fs.statSync(filename);
         const fileSizeInBytes = stats.size;
@@ -93,7 +100,7 @@ export namespace ImageClassifier {
         handleError: (error: any) => void,
         cb: (outPath: string | null, err: any) => void
     ) => {
-        const outPath = path.join(os.tmpdir(), path.basename(filePath) + ".resized.jpg");
+        const outPath = getSmallerFilePath(filePath);
 
         // read file to avoid issue where sharp does not release the file lock!
         fs.readFile(filePath, (err, data) => {

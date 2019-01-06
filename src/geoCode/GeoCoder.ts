@@ -6,6 +6,7 @@ import { ExifTag } from "../utils/ExifUtils";
 import { MapDateToLocation } from "../utils/MapDateToLocation";
 import { IOutputter } from "../utils/output/IOutputter";
 import { GeoCodeResponseParser } from "./GeoCodeResponseParser";
+import { EnvironmentVariables } from "../utils/EnvironmentVariables";
 
 export namespace GeoCoder {
     export async function processImage(
@@ -44,7 +45,7 @@ export namespace GeoCoder {
     }
 
     function getUrl(lat: string, long: string) {
-        const apiKey = process.env.IMAGE_CLASSIFIER_TS_API_KEY;
+        const apiKey = EnvironmentVariables.getApiKeyOrThrow();
 
         if (!apiKey) {
             throw new Error(
