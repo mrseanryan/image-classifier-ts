@@ -13,6 +13,7 @@ import { MapDateToLocation } from "./utils/MapDateToLocation";
 import { MapDateToLocationManager } from "./utils/MapDateToLocationManager";
 import { IOutputter } from "./utils/output/IOutputter";
 import { Verbosity } from "./utils/output/Verbosity";
+import { EnvironmentVariables } from "./utils/EnvironmentVariables";
 
 let hasError = false;
 const DELAY_BETWEEN_API_REQUESTS_IN_MILLIS = 1000 / 20;
@@ -31,6 +32,8 @@ export namespace DirectoryProcessor {
         outputter: IOutputter
     ): Promise<ProcessResult> {
         try {
+            EnvironmentVariables.validateOrThrow();
+
             const results = await processImageDirectory(args, outputter);
             dumpResults(results.resultsByPhase, outputter);
 
