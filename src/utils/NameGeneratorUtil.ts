@@ -20,6 +20,21 @@ export namespace NameGeneratorUtil {
             );
         }
 
+        return cleanNameForWindows(newName);
+    }
+
+    function cleanNameForWindows(name: string): string {
+        let newName = name;
+
+        // Windows does not like a folder ending in '.'
+        // That can happen for the location part, if Google returns nothing for the last part (e.g. for area3)
+        if (newName.startsWith(".")) {
+            newName = newName.substr(1);
+        }
+        if (newName.endsWith(".")) {
+            newName = newName.substr(0, newName.length - 1);
+        }
+
         return newName;
     }
 
