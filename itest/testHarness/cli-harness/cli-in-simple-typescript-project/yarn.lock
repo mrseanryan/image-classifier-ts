@@ -526,10 +526,10 @@ https-proxy-agent@^4.0.0:
     agent-base "5"
     debug "4"
 
-image-classifier-ts@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/image-classifier-ts/-/image-classifier-ts-3.0.1.tgz#6cce28100788f2a67f232794f8231f9ac29f3e3c"
-  integrity sha512-/OEOW8Pxi3d488Ld6B/32ejput6S6ewMLKPpQmCfjyK4N/iWeJuW+juzm9p7gCajgbXtN4Z3xILQxCc4aFgnpQ==
+image-classifier-ts@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/image-classifier-ts/-/image-classifier-ts-3.0.2.tgz#eba65c3a745c0a273a051e5636055a2c76267f71"
+  integrity sha512-J6aEJqFXcyoY5YfZyNsfYSX8GOWMIdswNmxFQsay8goY7vDXgqp7QIaXNHtQKyKro/CrC1OMWFQcKIqcRyNe0A==
   dependencies:
     "@google-cloud/vision" "^1.8.0"
     exifreader "^2.13.0"

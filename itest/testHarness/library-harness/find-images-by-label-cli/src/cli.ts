@@ -28,10 +28,10 @@ ic.DirectoryProcessor.processDirectory(icArgs, outputter)
         if (result.isOk) {
             console.log(successStyle("[success]"));
 
-            const labelsWanted = labels.split(",");
+            const labelsWanted = labels.split(",").map((l: string) => l.toLowerCase());
 
             const imagesWanted = result.imageProperties.filter(image =>
-                image.topLabels.some(top => labelsWanted.includes(top))
+                image.topLabels.some(top => labelsWanted.includes(top.toLowerCase()))
             );
 
             console.log(
