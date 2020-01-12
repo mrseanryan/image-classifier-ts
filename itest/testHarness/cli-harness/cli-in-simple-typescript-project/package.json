@@ -11,10 +11,9 @@
     "author": "Sean Ryan <mr.sean.ryan(at)gmail.com>",
     "license": "MIT",
     "dependencies": {
-        "image-classifier-ts": "^2.1.0",
-        "image-size": "^0.6.3",
-        "tslint": "^5.11.0",
-        "typescript": "^3.2.2"
+        "image-classifier-ts": "^3.0.1",
+        "tslint": "^5.20.1",
+        "typescript": "^3.7.4"
     },
     "private": true
 }
