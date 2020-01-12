@@ -27,9 +27,10 @@ and also to save time spent on sorting tons of photos!
 
 ## dependencies
 
--   Node 8.11.3 or higher
+-   Node 10.18.0 or higher
+-   Yarn
 
-### dependendcies for Windows
+### dependencies for Windows
 
 We use `sharp` to resize images during processing. `sharp` requires
 **[node-gyp](https://github.com/nodejs/node-gyp)** to build, so you will need to
@@ -52,18 +53,11 @@ npm install --global --production windows-build-tools
 
 ## usage - as cli (command line tool)
 
-### 1 Install dependencies
-
-Install:
-
--   Yarn
--   Node 8.3.11 (or higher)
-
-### 2 Configure your Google API key
+### 1 Configure your Google API key
 
 see [configure Google APIs](configure-google.md).
 
-### 3 Classify (label) your images
+### 2 Classify (label) your images
 
 *note: the processed images will be moved to the output directory. so you may want to point 'input directory' to a *copy* of your images directory.*
 
