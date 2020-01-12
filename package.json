@@ -2,15 +2,7 @@
     "name": "image-classifier-ts",
     "version": "0.0.0-semantically-released",
     "description": "Command line tool to auto-classify images, renaming them with appropriate labels. Uses Node and Google Vision API.",
-    "keywords": [
-        "classification",
-        "Google Vision",
-        "AI",
-        "image classification",
-        "ML",
-        "machine learning"
-    ],
-    "main": "dist/image-classifier-ts.umd.js",
+    "main": "dist/image-classifier-ts.js",
     "typings": "dist/types/image-classifier-ts.d.ts",
     "files": [
         "dist"
@@ -19,36 +11,7 @@
     "bin": {
         "image-classifier-ts": "./dist/lib/cli.js"
     },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/mrseanryan/image-classifier-ts.git"
-    },
     "license": "MIT",
-    "engines": {
-        "node": ">=8.3.0"
-    },
-    "scripts": {
-        "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
-        "lint:local": "tslint  --project tsconfig.json -t codeFrame",
-        "prebuild": "rimraf dist",
-        "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src && yarn build:cli",
-        "build:cli": "echo '#!/usr/bin/env node' > dist/lib/cli.js && cat dist/lib/main.js >> dist/lib/cli.js && chmod +x dist/lib/cli.js",
-        "build:minimal": "tsc --module commonjs",
-        "build-and-test": "yarn build:minimal && yarn test",
-        "log:dist": "ls dist -lR",
-        "start": "rollup -c rollup.config.ts -w",
-        "test": "jest --coverage",
-        "test:watch": "jest --coverage --watch",
-        "test:prod": "npm run build && npm run lint && npm run test -- --no-cache",
-        "deploy-docs": "ts-node tools/gh-pages-publish",
-        "report-coverage": "cat ./coverage/lcov.info | coveralls",
-        "commit": "git-cz",
-        "semantic-release": "semantic-release",
-        "semantic-release-prepare": "ts-node tools/semantic-release-prepare",
-        "precommit": "lint-staged",
-        "travis-deploy-once": "travis-deploy-once",
-        "prepush": "npm run test:prod"
-    },
     "lint-staged": {
         "{src,test}/**/*.ts": [
             "prettier --write",
@@ -64,6 +27,10 @@
         "transform": {
             ".(ts|tsx)": "ts-jest"
         },
+        "transformIgnorePatterns": [
+            "^.+\\.js$",
+            "^.+\\.json$"
+        ],
         "testEnvironment": "node",
         "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
         "moduleFileExtensions": [
@@ -90,6 +57,10 @@
         },
         "collectCoverageFrom": [
             "src/**/{ConsoleReporter,FilenameGenerator,GeoCodeResponseParser,MapDateToLocation,MapDateToLocationManager,Nodash,SimpleDate}.ts"
+        ],
+        "testPathIgnorePatterns": [
+            "/testHarness/",
+            "/node_modules/"
         ]
     },
     "prettier": {
@@ -102,47 +73,79 @@
         ]
     },
     "devDependencies": {
-        "@commitlint/cli": "^7.1.2",
-        "@commitlint/config-conventional": "^7.1.2",
-        "@types/jest": "^23.3.2",
-        "@types/node": "^10.12.11",
-        "@types/node-fetch": "^2.1.4",
-        "colors": "^1.3.2",
-        "commitizen": "^3.0.0",
-        "coveralls": "^3.0.2",
-        "cross-env": "^5.2.0",
-        "cz-conventional-changelog": "^2.1.0",
-        "husky": "^1.0.1",
-        "jest": "^23.6.0",
-        "jest-config": "^23.6.0",
-        "lint-staged": "^8.0.0",
-        "lodash.camelcase": "^4.3.0",
-        "prettier": "^1.14.3",
+        "@commitlint/cli": "^8.2.0",
+        "@commitlint/config-conventional": "^8.2.0",
+        "@types/jest": "^24.0.25",
+        "@types/lodash": "^4.14.149",
+        "@types/node": "^13.1.2",
+        "@types/node-fetch": "^2.5.4",
+        "colors": "^1.4.0",
+        "commitizen": "^4.0.3",
+        "coveralls": "^3.0.9",
+        "cross-env": "^6.0.3",
+        "cz-conventional-changelog": "^3.0.2",
+        "husky": "^3.1.0",
+        "jest": "^24.9.0",
+        "jest-config": "^24.9.0",
+        "lint-staged": "^9.5.0",
+        "prettier": "^1.19.1",
         "prompt": "^1.0.0",
-        "replace-in-file": "^3.4.2",
-        "rimraf": "^2.6.2",
-        "rollup": "^0.68.0",
-        "rollup-plugin-commonjs": "^9.1.8",
-        "rollup-plugin-json": "^3.1.0",
-        "rollup-plugin-node-resolve": "^4.0.0",
-        "rollup-plugin-sourcemaps": "^0.4.2",
-        "rollup-plugin-typescript2": "^0.18.0",
-        "semantic-release": "^15.12.3",
-        "travis-deploy-once": "^5.0.9",
-        "ts-jest": "^23.10.2",
-        "ts-node": "^7.0.1",
-        "tslint": "^5.11.0",
-        "tslint-config-prettier": "^1.15.0",
+        "replace-in-file": "^5.0.2",
+        "rimraf": "^3.0.0",
+        "semantic-release": "^15.14.0",
+        "ts-jest": "^24.2.0",
+        "ts-node": "^8.5.4",
+        "tslint": "^5.20.1",
+        "tslint-config-prettier": "^1.18.0",
         "tslint-config-standard-sr": "^8.2.0",
-        "typedoc": "^0.14.0",
-        "typescript": "^3.0.3"
+        "typedoc": "^0.15.6",
+        "typescript": "^3.7.4"
+    },
+    "engines": {
+        "node": ">=10.18.0"
+    },
+    "scripts": {
+        "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
+        "lint:local": "tslint  --project tsconfig.json -t codeFrame",
+        "prebuild": "rimraf dist",
+        "build": "tsc --module commonjs && typedoc --out docs --target es6 --theme minimal --mode file src && yarn build:cli",
+        "build:cli": "echo '#!/usr/bin/env node' > dist/lib/cli.js && cat dist/lib/main.js >> dist/lib/cli.js && chmod +x dist/lib/cli.js",
+        "build:minimal": "tsc --module commonjs",
+        "build-and-test": "yarn build:minimal && yarn test",
+        "log:dist": "ls dist -lR",
+        "test": "jest --coverage",
+        "test:watch": "jest --coverage --watch",
+        "test:prod": "yarn build && yarn lint && yarn test -- --no-cache",
+        "deploy-docs": "ts-node tools/gh-pages-publish",
+        "report-coverage": "cat ./coverage/lcov.info | coveralls",
+        "commit": "git-cz",
+        "semantic-release": "semantic-release",
+        "semantic-release-prepare": "ts-node tools/semantic-release-prepare"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mrseanryan/image-classifier-ts.git"
     },
     "dependencies": {
-        "@google-cloud/vision": "^0.24.0",
-        "exifreader": "^2.5.0",
-        "image-size": "^0.6.3",
-        "node-fetch": "^2.3.0",
-        "sharp": "^0.21.0",
-        "xmldom": "^0.1.27"
+        "@google-cloud/vision": "^1.8.0",
+        "exifreader": "^2.13.0",
+        "image-size": "^0.8.3",
+        "node-fetch": "^2.6.0",
+        "sharp": "^0.23.4",
+        "xmldom": "^0.2.1"
+    },
+    "keywords": [
+        "classification",
+        "Google Vision",
+        "AI",
+        "image classification",
+        "ML",
+        "machine learning"
+    ],
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged",
+            "pre-push": "yarn test:prod"
+        }
     }
 }
