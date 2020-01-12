@@ -2,7 +2,7 @@
     "name": "image-classifier-ts",
     "version": "0.0.0-semantically-released",
     "description": "Command line tool to auto-classify images, renaming them with appropriate labels. Uses Node and Google Vision API.",
-    "main": "dist/image-classifier-ts.js",
+    "main": "dist/lib/image-classifier-ts.js",
     "typings": "dist/types/image-classifier-ts.d.ts",
     "files": [
         "dist"
