@@ -1,7 +1,4 @@
-import { parse } from "marked";
-
 import { NameGeneratorUtil } from "./NameGeneratorUtil";
-import { StringUtils } from "./StringUtils";
 
 export enum FileFormatToken {
     CombinedLabels = "combinedLabels",

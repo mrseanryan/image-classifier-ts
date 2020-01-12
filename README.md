@@ -9,7 +9,6 @@ image-classifier-ts is stable, with ongoing development (tested on Windows, Ubun
 [![Travis](https://img.shields.io/travis/mrseanryan/image-classifier-ts.svg)](https://travis-ci.org/mrseanryan/image-classifier-ts)
 [![node](https://img.shields.io/node/v/image-classifier-ts.svg)](https://nodejs.org)
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/mrseanryan/image-classifier-ts.svg)](https://greenkeeper.io/)
 [![Dependencies](https://david-dm.org/mrseanryan/image-classifier-ts.svg)](https://david-dm.org/mrseanryan/image-classifier-ts)
 [![Dev Dependencies](https://david-dm.org/mrseanryan/image-classifier-ts/dev-status.svg)](https://david-dm.org/mrseanryan/image-classifier-ts?type=dev)
 
@@ -20,7 +19,6 @@ image-classifier-ts is stable, with ongoing development (tested on Windows, Ubun
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/mrseanryan)
 
 ## why?
 
@@ -33,11 +31,11 @@ and also to save time spent on sorting tons of photos!
 
 ### dependendcies for Windows
 
-We use `sharp` to resize images during processing. `sharp` requires 
+We use `sharp` to resize images during processing. `sharp` requires
 **[node-gyp](https://github.com/nodejs/node-gyp)** to build, so you will need to
 install
 [Microsoft's windows-build-tools](https://github.com/felixrieseberg/windows-build-tools)
-using this command:_
+using this command:
 
 ```bash
 npm install --global --production windows-build-tools
@@ -50,7 +48,7 @@ npm install --global --production windows-build-tools
 -   determine geographic location (address) of an image using the Google Geocoding API
 -   the output filename can include date, dimensions, file size as well as labels and adress provided by Google
 -   can take geographic locations from mobile photos and apply them to photos taken with a non-GPS device (matching by closest time for that date)
-- supports JPEG, PNG file formats
+-   supports JPEG, PNG file formats
 
 ## usage - as cli (command line tool)
 
