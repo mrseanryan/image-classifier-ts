@@ -119,7 +119,6 @@
         "deploy-docs": "ts-node tools/gh-pages-publish",
         "report-coverage": "cat ./coverage/lcov.info | coveralls",
         "commit": "git-cz",
-        "commitmsg": "commitlint -e",
         "semantic-release": "semantic-release",
         "semantic-release-prepare": "ts-node tools/semantic-release-prepare"
     },
@@ -145,6 +144,7 @@
     ],
     "husky": {
         "hooks": {
+            "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
             "pre-commit": "lint-staged",
             "pre-push": "yarn test:prod"
         }
