@@ -105,8 +105,8 @@
         "node": ">=10.18.0"
     },
     "scripts": {
-        "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
-        "lint:local": "tslint  --project tsconfig.json -t codeFrame",
+        "lint": "tslint -p tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
+        "lint:local": "tslint -p tsconfig.json -t codeFrame",
         "prebuild": "rimraf dist",
         "build": "tsc --module commonjs && typedoc --out docs --theme minimal src && yarn build:cli",
         "build:cli": "echo '#!/usr/bin/env node' > dist/lib/cli.js && cat dist/lib/main.js >> dist/lib/cli.js && chmod +x dist/lib/cli.js",
