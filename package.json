@@ -108,7 +108,7 @@
         "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
         "lint:local": "tslint  --project tsconfig.json -t codeFrame",
         "prebuild": "rimraf dist",
-        "build": "tsc --module commonjs && typedoc --out docs --target es6 --theme minimal --mode file src && yarn build:cli",
+        "build": "tsc --module commonjs && typedoc --out docs --theme minimal src && yarn build:cli",
         "build:cli": "echo '#!/usr/bin/env node' > dist/lib/cli.js && cat dist/lib/main.js >> dist/lib/cli.js && chmod +x dist/lib/cli.js",
         "build:minimal": "tsc --module commonjs",
         "build-and-test": "yarn build:minimal && yarn test",
