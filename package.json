@@ -119,6 +119,7 @@
         "deploy-docs": "ts-node tools/gh-pages-publish",
         "report-coverage": "cat ./coverage/lcov.info | coveralls",
         "commit": "git-cz",
+        "commitmsg": "commitlint -e",
         "semantic-release": "semantic-release",
         "semantic-release-prepare": "ts-node tools/semantic-release-prepare"
     },
