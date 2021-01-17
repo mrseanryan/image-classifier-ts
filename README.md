@@ -19,6 +19,8 @@ image-classifier-ts is stable, with ongoing development (tested on Windows, Ubun
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K73ALBJ)
+
 ## why?
 
 The project was started as a way to avoid depending on particular photo software such as Picasa,
