@@ -123,8 +123,7 @@
     },
     "repository": {
         "type": "git",
-        "url":
-"git@github.com:mrseanryan/image-classifier-ts.git"
+        "url": "git@github.com:mrseanryan/image-classifier-ts.git"
     },
     "dependencies": {
         "@google-cloud/vision": "^2.2.0",
@@ -134,7 +133,7 @@
         "sharp": "^0.27.0",
         "xmldom": "^0.4.0"
     },
-    "funding": "https://github.com/mrseanryan/image-classifier?sponsor=1",
+    "funding": "https://github.com/mrseanryan/image-classifier-ts?sponsor=1",
     "keywords": [
         "classification",
         "Google Vision",
