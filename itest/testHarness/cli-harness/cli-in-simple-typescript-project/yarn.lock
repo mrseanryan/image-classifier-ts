@@ -593,10 +593,10 @@ ieee754@^1.1.13:
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.2.1.tgz#8eb7a10a63fff25d15a57b001586d177d1b0d352"
   integrity sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==
 
-image-classifier-ts@^3.0.11:
-  version "3.0.11"
-  resolved "https://registry.yarnpkg.com/image-classifier-ts/-/image-classifier-ts-3.0.11.tgz#f022e46343298c14ca8bd9ccd9b29b4f227dc92a"
-  integrity sha512-b5PJ7SiCNG+8RE/KbUnPdDFNJInhzT2tJ2gmM6h3sFKYjzJboVj5mdoDne85RpUwoLAGjk5e/IRwEyCDAKEOFQ==
+image-classifier-ts@^3.0.12:
+  version "3.0.12"
+  resolved "https://registry.yarnpkg.com/image-classifier-ts/-/image-classifier-ts-3.0.12.tgz#331b26b755bcc178bcecbdfdb3ad0cea170344f6"
+  integrity sha512-4v3Pk2vOFVdYvNykKhro9PEU89HiHLBzCSercdi4752dfC5ORQ+eKLAJM5SjR9kCRoopws3AzNaYXfo/R+ulTw==
   dependencies:
     "@google-cloud/vision" "^2.2.0"
     exifreader "^2.13.0"
