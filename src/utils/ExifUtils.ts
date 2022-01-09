@@ -25,7 +25,7 @@ export enum ExifTag {
     GPSLongitudeRef = "GPSLongitudeRef", // East longitude
     ISOSpeedRatings = "ISOSpeedRatings", // 40
     Orientation = "Orientation", // right-top
-    ShutterSpeedValue = "ShutterSpeedValue" // 7.05
+    ShutterSpeedValue = "ShutterSpeedValue", // 7.05
 }
 
 const KNOWN_LATITUDE_FORMAT = "North latitude";
@@ -39,7 +39,7 @@ export class ExifTagSet {
 
         const tagSet = new ExifTagSet();
 
-        interestingTags.forEach(tag => {
+        interestingTags.forEach((tag) => {
             const value = tags[tag] ? tags[tag].description : null;
 
             if (value) {
@@ -86,7 +86,7 @@ export class ExifTagSet {
         const now = new Date();
         const nowSimple = SimpleDate.fromDate(now);
 
-        const validDates = dates.filter(d => d.year <= nowSimple.year && d.year > 1970);
+        const validDates = dates.filter((d) => d.year <= nowSimple.year && d.year > 1970);
 
         return validDates[0] || null;
     }
@@ -94,8 +94,8 @@ export class ExifTagSet {
     private getAvailableDateStamps(): SimpleDate[] {
         return [
             this.tryGetExifDateStamp(ExifTag.GPSDateStamp),
-            this.tryGetExifDateStamp(ExifTag.DateTime)
-        ].filter(d => !!d) as SimpleDate[];
+            this.tryGetExifDateStamp(ExifTag.DateTime),
+        ].filter((d) => !!d) as SimpleDate[];
     }
 
     private tryGetExifDateStamp(tag: ExifTag): SimpleDate | null {
@@ -143,7 +143,7 @@ export namespace ExifUtils {
             deleteUnusedTags(tags);
 
             return ExifTagSet.fromTags(tags, outputter);
-        } catch (error) {
+        } catch (error: any) {
             if (error.name === "MetadataMissingError") {
                 return null;
             }
@@ -163,8 +163,8 @@ export namespace ExifUtils {
 
         // also delete any props that start with 'undefined-
         Object.keys(tags)
-            .filter(t => t.startsWith("undefined"))
-            .forEach(t => {
+            .filter((t) => t.startsWith("undefined"))
+            .forEach((t) => {
                 tags[t] = DELETED;
             });
     }

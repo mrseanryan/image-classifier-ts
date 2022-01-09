@@ -22,7 +22,7 @@ export namespace ArgsParser {
             updateConfigFromOptionalArgs(args);
 
             return args;
-        } catch (error) {
+        } catch (error: any) {
             if (error.name === "HelpNeededError") {
                 UsageText.showUsage();
                 return null;
