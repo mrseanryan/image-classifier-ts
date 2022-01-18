@@ -129,10 +129,10 @@
     "dependencies": {
         "@google-cloud/vision": "^2.2.0",
         "exifreader": "^2.13.0",
-        "image-size": "^0.9.3",
+        "image-size": "^1.0.1",
         "node-fetch": "^2.6.0",
-        "sharp": "^0.27.0",
-        "xmldom": "^0.4.0"
+        "sharp": "^0.29.3",
+        "xmldom": "^0.6.0"
     },
     "funding": "https://github.com/mrseanryan/image-classifier-ts?sponsor=1",
     "keywords": [
