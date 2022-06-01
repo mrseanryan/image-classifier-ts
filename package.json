@@ -131,7 +131,7 @@
         "exifreader": "^2.13.0",
         "image-size": "^1.0.1",
         "node-fetch": "^2.6.0",
-        "sharp": "^0.29.3",
+        "sharp": "^0.30.5",
         "xmldom": "^0.6.0"
     },
     "funding": "https://github.com/mrseanryan/image-classifier-ts?sponsor=1",
