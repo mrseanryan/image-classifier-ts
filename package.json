@@ -129,7 +129,7 @@
     "dependencies": {
         "@google-cloud/vision": "^2.2.0",
         "exifreader": "^2.13.0",
-        "image-size": "^1.0.1",
+        "image-size": "npm:image-size-next@1.2.2",
         "node-fetch": "^2.6.0",
         "sharp": "^0.29.3",
         "xmldom": "^0.6.0"
